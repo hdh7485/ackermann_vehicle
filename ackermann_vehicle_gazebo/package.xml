@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <name>ackermann_vehicle_gazebo</name>
+  <version>1.0.0</version>
+  <description>
+    ackermann_vehicle_gazebo is used with Gazebo for simulating a vehicle with
+    Ackermann steering.
+
+    Copyright (c) 2013 Wunderkammer Laboratory
+  </description>
+  <maintainer email="jim.rothrock@wunderkammerlab.com">
+    Jim Rothrock, Wunderkammer Laboratory
+  </maintainer>
+  <license>TODO</license>
+
+  <author email="jim.rothrock@wunderkammerlab.com">
+    Jim Rothrock, Wunderkammer Laboratory
+  </author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>gazebo_ros</build_depend>
+
+  <run_depend>ackermann_vehicle_description</run_depend>
+  <run_depend>controller_manager</run_depend>
+  <run_depend>gazebo_ros</run_depend>
+  <run_depend>xacro</run_depend>
+</package>

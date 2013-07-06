@@ -1,0 +1,45 @@
+# ros_control.yaml
+
+ackermann_vehicle:
+  left_front_shock_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: left_front_shock
+    pid: {p: 10.0, i: 0.0, d: 1.0}
+  right_front_shock_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: right_front_shock
+    pid: {p: 10.0, i: 0.0, d: 1.0}
+  left_rear_shock_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: left_rear_shock
+    pid: {p: 10.0, i: 0.0, d: 1.0}
+  right_rear_shock_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: right_rear_shock
+    pid: {p: 10.0, i: 0.0, d: 1.0}
+
+  left_front_axle_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: left_front_axle
+    pid: {p: 1.0, i: 0.0, d: 0.0}
+  right_front_axle_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: right_front_axle
+    pid: {p: 1.0, i: 0.0, d: 0.0}
+  left_rear_axle_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: left_rear_axle
+    pid: {p: 1.0, i: 0.0, d: 0.0}
+  right_rear_axle_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: right_rear_axle
+    pid: {p: 1.0, i: 0.0, d: 0.0}
+
+  left_steering_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: left_steering_joint
+    pid: {p: 0.7193, i: 0.0, d: 0.0001}
+  right_steering_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: right_steering_joint
+    pid: {p: 0.7193, i: 0.0, d: 0.0001}
