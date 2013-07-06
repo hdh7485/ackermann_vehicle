@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<!-- ackermann_vehicle_rviz.launch
+
+Use rviz to visualize a vehicle with Ackermann steering.
+
+Copyright (c) 2013 Wunderkammer Laboratory
+-->
+
+<launch>
+  <!-- Load the vehicle's description onto the parameter server. -->
+  <param name="robot_description"
+         command="$(find xacro)/xacro.py $(find ackermann_vehicle_description)/urdf/em_3905.urdf.xacro"/>
+
+  <!-- Publish the joint states and display them in a GUI. Publish the
+       vehicle's state to tf. -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher"
+        type="joint_state_publisher">
+    <param name="use_gui" value="true"/>
+  </node>
+  <node name="vehicle_state_publisher" pkg="robot_state_publisher"
+        type="state_publisher"/>
+
+  <!-- Launch rviz. -->
+  <node name="rviz" pkg="rviz" type="rviz"/>
+</launch>
