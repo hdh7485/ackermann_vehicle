@@ -19,7 +19,7 @@ Copyright (c) 2013 Wunderkammer Laboratory
         args="-urdf -param robot_description -model ackermann_vehicle -z 0.1"/>
 
   <!-- Load the joint controllers. -->
-  <rosparam file="$(find ackermann_vehicle_gazebo)/config/em_3905_ctrlr_params.yaml"
+  <rosparam file="$(find ackermann_vehicle_gazebo)/config/em_3905_ros_ctrlr_params.yaml"
             command="load"/>
   <node name="controller_spawner" pkg="controller_manager" type="spawner"
         args="--namespace=/
@@ -35,12 +35,6 @@ Copyright (c) 2013 Wunderkammer Laboratory
               /ackermann_vehicle/right_steering_ctrlr"/>
 
 <!--
-rosservice call /e_maxx/controller_manager/load_controller "name: /e_maxx/left_front_axle_ctrlr"
-
-rosservice call /e_maxx/controller_manager/switch_controller "{start_controllers: ['left_front_axle_ctrlr'], stop_controllers: [], strictness: 0}"
-
-rostopic pub /e_maxx/left_front_axle_ctrlr/command std_msgs/Float64 "data: 100.0"
-
 rostopic pub /ackermann_vehicle/left_steering_ctrlr/command std_msgs/Float64 "data: 2.0"
 -->
 </launch>
