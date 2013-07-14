@@ -69,8 +69,8 @@ Copyright (c) 2011-2013 Wunderkammer Laboratory
   <xacro:property name="axle_length" value="0.03"/>
   <xacro:property name="wheel_travel" value="0.084"/>
   <xacro:property name="shock_z_offset" value="0.0655"/>
-  <xacro:property name="shock_stroke" value="0.028575"/>
 <!--
+  <xacro:property name="shock_stroke" value="0.028575"/>
   <xacro:property name="shock_spring_constant" value="437.817"/>
   <xacro:property name="shock_damping" value="36.2416"/>
 -->
@@ -78,15 +78,19 @@ Copyright (c) 2011-2013 Wunderkammer Laboratory
   <!-- These constants describe a Traxxas 2056 servo operated at 6 V.
        no_load_speed is measured in rad/s. stall_torque is measured in
        N m. kp is stall_torque / (pi / 4). -->
-<!--
   <xacro:property name="no_load_speed" value="4.553"/>
   <xacro:property name="stall_torque" value="0.5649"/>
+<!--
   <xacro:property name="kp" value="0.7193"/>
   <xacro:property name="ki" value="0"/>
   <xacro:property name="kd" value="0.0001"/>
   <xacro:property name="i_min" value="0"/>
   <xacro:property name="i_max" value="0"/>
 -->
+
+  <!-- ctrl_period is the control period for the ros_control plug-in. It is
+       measured in seconds. -->
+  <xacro:property name="ctrl_period" value="0.001"/>
 
   <material name="battery_mat">
     <color rgba="0 0 1 1"/>
@@ -281,8 +285,10 @@ Copyright (c) 2011-2013 Wunderkammer Laboratory
       <parent link="${lr_prefix}_steering_link"/>
       <child link="${lr_prefix}_${fr_prefix}_axle_carrier"/>
       <axis xyz="0 0 -1"/>
+      <!-- stall_torque is multiplied by two because steering is controlled by
+           two servos connected in parallel. -->
       <limit lower="${-degrees_45}" upper="${degrees_45}"
-             effort="1000" velocity="1000"/>
+             effort="${2 * stall_torque}" velocity="${no_load_speed}"/>
     </joint>
     <transmission name="${lr_prefix}_steering_trans"
                   type="transmission_interface/SimpleTransmission">
@@ -370,7 +376,7 @@ Copyright (c) 2011-2013 Wunderkammer Laboratory
     <plugin name="ros_control" filename="libgazebo_ros_control.so">
       <robotNamespace>/</robotNamespace>
       <robotParam>robot_description</robotParam>
-      <controlPeriod>0.001</controlPeriod>
+      <controlPeriod>${ctrl_period}</controlPeriod>
     </plugin>
   </gazebo>
 
