@@ -1,0 +1,73 @@
+# em_3905_ros_ctrlr_params.yaml
+
+ackermann_vehicle:
+  # These constants describe a Traxxas 2056 servo operated at 6 V.
+  # no_load_speed is measured in rad/s. stall_torque is measured in
+  # N m. kp is stall_torque / (pi / 4).
+  #
+  # stall_torque = 0.5649
+  # kp = 0.7193
+  # ki = 0
+  # kd = 0.0001
+  #
+  # stallTorque is multiplied by two because steering is controlled by
+  # two servos connected in parallel.
+
+  left_steering_ctrlr:
+    joint: left_steering_joint
+    type: effort_controllers/JointPositionController
+    pid: {p: 0.7193, i: 0.0, d: 0.0001}
+  right_steering_ctrlr:
+    joint: right_steering_joint
+    type: effort_controllers/JointPositionController
+    pid: {p: 0.7193, i: 0.0, d: 0.0001}
+
+  # TODO: These should be velocity controllers.
+  left_front_axle_ctrlr:
+    joint: left_front_axle
+    type: effort_controllers/JointPositionController
+    pid: {p: 1.0, i: 0.0, d: 0.0}
+  right_front_axle_ctrlr:
+    joint: right_front_axle
+    type: effort_controllers/JointPositionController
+    pid: {p: 1.0, i: 0.0, d: 0.0}
+  left_rear_axle_ctrlr:
+    joint: left_rear_axle
+    type: effort_controllers/JointPositionController
+    pid: {p: 1.0, i: 0.0, d: 0.0}
+  right_rear_axle_ctrlr:
+    type: effort_controllers/JointPositionController
+    joint: right_rear_axle
+    pid: {p: 1.0, i: 0.0, d: 0.0}
+
+  # wheel_travel is the
+  # vertical wheel travel. shock_spring_constant is the constant of an
+  # Ultra Shock spring, measured in N/m. shock_damping is the shock
+  # absorber's viscous damping coefficient, measured in Ns/m. Its value is
+  # sqrt(3 * shock_spring_constant).
+  #
+  # wheel_travel = 0.084
+  # shock_stroke = 0.028575
+  # shock_spring_constant = 437.817
+  # shock_damping = 36.2416
+  # springConstant = 2 * (shock_stroke * shock_spring_constant /
+  #                       wheel_travel)
+  # equilibriumPosition = -wheel_travel / 2 = -0.042
+  # dampingCoefficient = 2 * shock_damping
+
+  left_front_shock_ctrlr:
+    joint: left_front_shock
+    type: effort_controllers/JointPositionController
+    pid: {p: 297.8719, i: 0.0, d: 72.4832}
+  right_front_shock_ctrlr:
+    joint: right_front_shock
+    type: effort_controllers/JointPositionController
+    pid: {p: 297.8719, i: 0.0, d: 72.4832}
+  left_rear_shock_ctrlr:
+    joint: left_rear_shock
+    type: effort_controllers/JointPositionController
+    pid: {p: 297.8719, i: 0.0, d: 72.4832}
+  right_rear_shock_ctrlr:
+    joint: right_rear_shock
+    type: effort_controllers/JointPositionController
+    pid: {p: 297.8719, i: 0.0, d: 72.4832}
