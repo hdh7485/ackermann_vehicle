@@ -15,10 +15,23 @@ material.
 
 Traxxas(R) and E-Maxx(R) are registered trademarks of Traxxas Management, LLC.
 em_3905.urdf.xacro was independently created by Wunderkammer Laboratory, and
-neither em_3905.urdf.xacro nor Wunderkammer Laboratory are affiliated with,
-sponsored by, approved by, or endorsed by Traxxas Management, LLC.
+neither em_3905.urdf.xacro nor Wunderkammer Laboratory is affiliated with,
+sponsored by, approved by, or endorsed by Traxxas Management, LLC. All other
+trademarks and service marks are the property of their respective owners.
 
 Copyright (c) 2011-2013 Wunderkammer Laboratory
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 -->
 
 <robot name="em_3905" xmlns:xacro="http://www.ros.org/wiki/xacro">
@@ -61,7 +74,7 @@ Copyright (c) 2011-2013 Wunderkammer Laboratory
        the shock absorbers are fully extended. axle_length is the distance
        from a U joint to the corresponding hex hub. wheel_travel is the
        vertical wheel travel. shock_spring_constant is the constant of an
-       Ultra Shock spring, measured in N/m. shock_damping is the shock
+       TODO Ultra Shock spring, measured in N/m. shock_damping is the shock
        absorber's viscous damping coefficient, measured in Ns/m. Its value is
        sqrt(3 * shock_spring_constant). -->
   <xacro:property name="wheelbase" value="0.335"/>
@@ -75,8 +88,8 @@ Copyright (c) 2011-2013 Wunderkammer Laboratory
   <xacro:property name="shock_damping" value="36.2416"/>
 -->
 
-  <!-- These constants describe a Traxxas 2056 servo operated at 6 V.
-       no_load_speed is measured in rad/s. stall_torque is measured in
+  <!-- These constants are used to simulate a Traxxas 2056 servo operated at
+       6 V. no_load_speed is measured in rad/s. stall_torque is measured in
        N m. kp is stall_torque / (pi / 4). -->
   <xacro:property name="no_load_speed" value="4.553"/>
   <xacro:property name="stall_torque" value="0.5649"/>
