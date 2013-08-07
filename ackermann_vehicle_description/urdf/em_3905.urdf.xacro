@@ -220,12 +220,12 @@ limitations under the License.
       <limit lower="${-wheel_travel / 2}" upper="${wheel_travel / 2}"
              effort="1000" velocity="1000"/>
     </joint>
-    <transmission name="${lr_prefix}_${fr_prefix}_shock_trans"
-                  type="transmission_interface/SimpleTransmission">
+    <transmission name="${lr_prefix}_${fr_prefix}_shock_trans">
+      <type>transmission_interface/SimpleTransmission</type>
       <joint name="${lr_prefix}_${fr_prefix}_shock"/>
-      <actuator name="${lr_prefix}_${fr_prefix}_shock_act"
-                type="EffortJointInterface"/>
-      <mechanicalReduction>1</mechanicalReduction>
+      <actuator name="${lr_prefix}_${fr_prefix}_shock_act">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </actuator>
     </transmission>
   </xacro:macro>
 
@@ -243,12 +243,12 @@ limitations under the License.
       <origin rpy="${degrees_90} 0 0"/>
       <axis xyz="0 0 -1"/>
     </joint>
-    <transmission name="${lr_prefix}_${fr_prefix}_axle_trans"
-                  type="transmission_interface/SimpleTransmission">
+    <transmission name="${lr_prefix}_${fr_prefix}_axle_trans">
+      <type>transmission_interface/SimpleTransmission</type>
       <joint name="${lr_prefix}_${fr_prefix}_axle"/>
-      <actuator name="${lr_prefix}_${fr_prefix}_axle_act"
-                type="EffortJointInterface"/>
-      <mechanicalReduction>1</mechanicalReduction>
+      <actuator name="${lr_prefix}_${fr_prefix}_axle_act">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </actuator>
     </transmission>
 
     <link name="${lr_prefix}_${fr_prefix}_wheel">
@@ -303,12 +303,12 @@ limitations under the License.
       <limit lower="${-degrees_45}" upper="${degrees_45}"
              effort="${2 * stall_torque}" velocity="${no_load_speed}"/>
     </joint>
-    <transmission name="${lr_prefix}_steering_trans"
-                  type="transmission_interface/SimpleTransmission">
+    <transmission name="${lr_prefix}_steering_trans">
+      <type>transmission_interface/SimpleTransmission</type>
       <joint name="${lr_prefix}_steering_joint"/>
-      <actuator name="${lr_prefix}_steering_act"
-                type="EffortJointInterface"/>
-      <mechanicalReduction>1</mechanicalReduction>
+      <actuator name="${lr_prefix}_steering_act">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </actuator>
     </transmission>
 
     <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="${fr_prefix}"
