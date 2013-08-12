@@ -6,7 +6,7 @@ This file defines a model of a Traxxas(R) E-Maxx(R) #3905 RC (Radio Controlled)
 truck.
 
 Lengths are measured in meters, angles are measured in radians, and masses are
-measured in kilograms.
+measured in kilograms. All of these values are approximations.
 
 To work with Gazebo, each link must have an inertial element, even if
 the link only serves to connect two joints. To be visible in Gazebo, a link
@@ -73,33 +73,18 @@ limitations under the License.
   <!-- hex_hub_dist is the distance between left and right hex hubs when
        the shock absorbers are fully extended. axle_length is the distance
        from a U joint to the corresponding hex hub. wheel_travel is the
-       vertical wheel travel. shock_spring_constant is the constant of an
-       TODO Ultra Shock spring, measured in N/m. shock_damping is the shock
-       absorber's viscous damping coefficient, measured in Ns/m. Its value is
-       sqrt(3 * shock_spring_constant). -->
+       vertical wheel travel. -->
   <xacro:property name="wheelbase" value="0.335"/>
   <xacro:property name="hex_hub_dist" value="0.365"/>
   <xacro:property name="axle_length" value="0.03"/>
   <xacro:property name="wheel_travel" value="0.084"/>
   <xacro:property name="shock_z_offset" value="0.0655"/>
-<!--
-  <xacro:property name="shock_stroke" value="0.028575"/>
-  <xacro:property name="shock_spring_constant" value="437.817"/>
-  <xacro:property name="shock_damping" value="36.2416"/>
--->
 
   <!-- These constants are used to simulate a Traxxas 2056 servo operated at
        6 V. no_load_speed is measured in rad/s. stall_torque is measured in
-       N m. kp is stall_torque / (pi / 4). -->
+       N m. -->
   <xacro:property name="no_load_speed" value="4.553"/>
   <xacro:property name="stall_torque" value="0.5649"/>
-<!--
-  <xacro:property name="kp" value="0.7193"/>
-  <xacro:property name="ki" value="0"/>
-  <xacro:property name="kd" value="0.0001"/>
-  <xacro:property name="i_min" value="0"/>
-  <xacro:property name="i_max" value="0"/>
--->
 
   <!-- ctrl_period is the control period for the ros_control plug-in. It is
        measured in seconds. -->
@@ -216,7 +201,7 @@ limitations under the License.
       <origin xyz="${fr_reflect * wheelbase / 2}
                    ${lr_reflect * ((hex_hub_dist / 2) - axle_length)}
                    ${(wheel_travel / 2) - shock_z_offset}"/>
-      <axis xyz="0 0 1"/>
+      <axis xyz="0 0 -1"/>
       <limit lower="${-wheel_travel / 2}" upper="${wheel_travel / 2}"
              effort="1000" velocity="1000"/>
     </joint>
@@ -242,6 +227,7 @@ limitations under the License.
       <child link="${lr_prefix}_${fr_prefix}_wheel"/>
       <origin rpy="${degrees_90} 0 0"/>
       <axis xyz="0 0 -1"/>
+      <limit effort="1000" velocity="1000"/>
     </joint>
     <transmission name="${lr_prefix}_${fr_prefix}_axle_trans">
       <type>transmission_interface/SimpleTransmission</type>
@@ -297,11 +283,9 @@ limitations under the License.
     <joint name="${lr_prefix}_steering_joint" type="revolute">
       <parent link="${lr_prefix}_steering_link"/>
       <child link="${lr_prefix}_${fr_prefix}_axle_carrier"/>
-      <axis xyz="0 0 -1"/>
-      <!-- stall_torque is multiplied by two because steering is controlled by
-           two servos connected in parallel. -->
+      <axis xyz="0 0 1"/>
       <limit lower="${-degrees_45}" upper="${degrees_45}"
-             effort="${2 * stall_torque}" velocity="${no_load_speed}"/>
+             effort="${stall_torque}" velocity="${no_load_speed}"/>
     </joint>
     <transmission name="${lr_prefix}_steering_trans">
       <type>transmission_interface/SimpleTransmission</type>
@@ -392,51 +376,4 @@ limitations under the License.
       <controlPeriod>${ctrl_period}</controlPeriod>
     </plugin>
   </gazebo>
-
-<!--
-    <gazebo>
-      <controller:gazebo_ros_spring name="${lr_prefix}_${fr_prefix}_spring" plugin="libgazebo_ros_spring.so">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>1000</updateRate>
-        <jointName>${lr_prefix}_${fr_prefix}_shock</jointName>
-        <springConstant>${2 * (shock_stroke * shock_spring_constant /
-          wheel_travel)}</springConstant>
-        <equilibriumPosition>${-wheel_travel / 2}</equilibriumPosition>
-        <dampingCoefficient>${2 * shock_damping}</dampingCoefficient>
-      </controller:gazebo_ros_spring>
-    </gazebo>
--->
-
-    <!-- Steering controller -->
-<!--
-    <controller:ackermann_steering_controller name="steering_controller" plugin="libackermann_steering_controller.so">
-      <alwaysOn>true</alwaysOn>
-      <updateRate>1000</updateRate>
-
-      <leftJointName>left_steering_joint</leftJointName>
-      <rightJointName>right_steering_joint</rightJointName>
-      <jointDistance>${hex_hub_dist - 2 * axle_length}</jointDistance>
-      <wheelbase>${wheelbase}</wheelbase>
--->
-
-      <!-- stallTorque is multiplied by two because steering is controlled by
-           two servos connected in parallel. -->
-<!--
-      <noLoadSpeed>${no_load_speed}</noLoadSpeed>
-      <stallTorque>${2 * stall_torque}</stallTorque>
-      <kP>${kp}</kP>
-      <kI>${ki}</kI>
-      <kD>${kd}</kD>
-      <iMin>${i_min}</iMin>
-      <iMax>${i_max}</iMax>
-    </controller:ackermann_steering_controller>
--->
-
-    <!-- ESC -->
-<!--
-    <controller:electronic_speed_control name="esc" plugin="libelectronic_speed_control.so">
-      <alwaysOn>true</alwaysOn>
-      <updateRate>1000</updateRate>
-    </controller:electronic_speed_control>
--->
 </robot>
