@@ -1,17 +1,33 @@
 # em_3905_ros_ctrlr_params.yaml
+#
+# This file defines controller parameter values used for simulating a
+# Traxxas(R) E-Maxx(R) #3905 RC (Radio Controlled) truck.
+#
+# Traxxas(R) and E-Maxx(R) are registered trademarks of Traxxas Management,
+# LLC. em_3905_ros_ctrlr_params.yaml was independently created by Wunderkammer
+# Laboratory, and neither em_3905_ros_ctrlr_params.yaml nor Wunderkammer
+# Laboratory is affiliated with, sponsored by, approved by, or endorsed by
+# Traxxas Management, LLC. All other trademarks and service marks are the
+# property of their respective owners.
+#
+# Copyright (c) 2013 Wunderkammer Laboratory
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 ackermann_vehicle:
-  # These constants describe a Traxxas 2056 servo operated at 6 V.
-  # no_load_speed is measured in rad/s. stall_torque is measured in
-  # N m. kp is stall_torque / (pi / 4).
-  #
-  # stall_torque = 0.5649
-  # kp = 0.7193
-  # ki = 0
-  # kd = 0.0001
-  #
-  # stallTorque is multiplied by two because steering is controlled by
-  # two servos connected in parallel.
+  # The proportional gain of each steering controller is stall_torque /
+  # (pi / 4). stall_torque, an approximation of a Traxxas(R) 2056 servo's stall
+  # torque at 6 V, is 0.5649 N m.
 
   left_steering_ctrlr:
     joint: left_steering_joint
@@ -22,38 +38,33 @@ ackermann_vehicle:
     type: effort_controllers/JointPositionController
     pid: {p: 0.7193, i: 0.0, d: 0.0001}
 
-  # TODO: These should be velocity controllers.
   left_front_axle_ctrlr:
     joint: left_front_axle
-    type: effort_controllers/JointPositionController
-    pid: {p: 1.0, i: 0.0, d: 0.0}
+    type: effort_controllers/JointVelocityController
+    pid: {p: 10.0, i: 10.0, d: 0.0}
   right_front_axle_ctrlr:
     joint: right_front_axle
-    type: effort_controllers/JointPositionController
-    pid: {p: 1.0, i: 0.0, d: 0.0}
+    type: effort_controllers/JointVelocityController
+    pid: {p: 10.0, i: 10.0, d: 0.0}
   left_rear_axle_ctrlr:
     joint: left_rear_axle
-    type: effort_controllers/JointPositionController
-    pid: {p: 1.0, i: 0.0, d: 0.0}
+    type: effort_controllers/JointVelocityController
+    pid: {p: 10.0, i: 10.0, d: 0.0}
   right_rear_axle_ctrlr:
-    type: effort_controllers/JointPositionController
+    type: effort_controllers/JointVelocityController
     joint: right_rear_axle
-    pid: {p: 1.0, i: 0.0, d: 0.0}
+    pid: {p: 10.0, i: 10.0, d: 0.0}
 
-  # wheel_travel is the
-  # vertical wheel travel. shock_spring_constant is the constant of an
-  # Ultra Shock spring, measured in N/m. shock_damping is the shock
-  # absorber's viscous damping coefficient, measured in Ns/m. Its value is
-  # sqrt(3 * shock_spring_constant).
+  # The proportional gain of each shock absorber controller is
+  # 2 * (shock_stroke * shock_spring_constant / wheel_travel). shock_stroke is
+  # 0.028575 meters. shock_spring_constant, an approximation of a Traxxas
+  # Ultra Shock shock absorber spring's constant, is 437.817 N/m.
+  # wheel_travel, defined in em_3905.urdf.xacro, is 0.084 meters.
   #
-  # wheel_travel = 0.084
-  # shock_stroke = 0.028575
-  # shock_spring_constant = 437.817
-  # shock_damping = 36.2416
-  # springConstant = 2 * (shock_stroke * shock_spring_constant /
-  #                       wheel_travel)
-  # equilibriumPosition = -wheel_travel / 2 = -0.042
-  # dampingCoefficient = 2 * shock_damping
+  # The derivative gain of each shock absorber controller is 2 * shock_damping.
+  # shock_damping, an approximation of the viscous damping coefficient of an
+  # Ultra Shock shock absorber, is 36.2416 Ns/m
+  # (i.e. sqrt(3 * shock_spring_constant)).
 
   left_front_shock_ctrlr:
     joint: left_front_shock
