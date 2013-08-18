@@ -1,0 +1,46 @@
+# em_3905_ackermann_ctrlr_params.yaml
+#
+# This file defines ackermann_controller parameter values used for simulating a
+# Traxxas(R) E-Maxx(R) #3905 RC (Radio Controlled) truck.
+#
+# Traxxas(R) and E-Maxx(R) are registered trademarks of Traxxas Management,
+# LLC. em_3905_ackermann_ctrlr_params.yaml was independently created by
+# Wunderkammer Laboratory, and neither em_3905_ackermann_ctrlr_params.yaml nor
+# Wunderkammer Laboratory is affiliated with, sponsored by, approved by,
+# or endorsed by Traxxas Management, LLC. All other trademarks and service
+# marks are the property of their respective owners.
+#
+# Copyright (c) 2013 Wunderkammer Laboratory
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+left_steering_controller_name: left_steering_ctrlr
+right_steering_controller_name: right_steering_ctrlr
+
+left_front_axle_controller_name: left_front_axle_ctrlr
+right_front_axle_controller_name: right_front_axle_ctrlr
+left_rear_axle_controller_name: left_rear_axle_ctrlr
+right_rear_axle_controller_name: right_rear_axle_ctrlr
+
+# The equilibrium position of each shock absorber is wheel_travel / 2.
+# wheel_travel, defined in em_3905.urdf.xacro, is 0.084 meters.
+
+shock_absorber_controllers:
+  - name: left_front_shock_ctrlr
+    equilibrium_position: 0.042
+  - name: right_front_shock_ctrlr
+    equilibrium_position: 0.042
+  - name: left_rear_shock_ctrlr
+    equilibrium_position: 0.042
+  - name: right_rear_shock_ctrlr
+    equilibrium_position: 0.042
