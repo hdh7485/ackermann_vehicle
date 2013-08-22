@@ -45,4 +45,13 @@ limitations under the License.
               /ackermann_vehicle/right_rear_axle_ctrlr
               /ackermann_vehicle/left_steering_ctrlr
               /ackermann_vehicle/right_steering_ctrlr"/>
+
+  <node name="ackermann_controller" pkg="ackermann_vehicle_gazebo"
+        type="ackermann_controller.py">
+    <rosparam file="$(find ackermann_vehicle_gazebo)/config/em_3905_ackermann_ctrlr_params.yaml" command="load"/>
+  </node>
+
+<!--
+rostopic pub /ackermann_vehicle/left_steering_ctrlr/command std_msgs/Float64 "data: 2.0"
+-->
 </launch>
