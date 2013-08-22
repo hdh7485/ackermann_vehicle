@@ -39,24 +39,24 @@ ackermann_vehicle:
     pid: {p: 0.7193, i: 0.0, d: 0.0001}
 
   # TODO: Each axle controller should be of type
-  # effort_controllers/JointVelocityController, but that results in
-  # "Assertion `vel_' failed" as of 8/17/13.
+  # effort_controllers/JointVelocityController, but as of 8/21/13, that
+  # results in many of the robot's components being moved to its origin.
   left_front_axle_ctrlr:
     joint: left_front_axle
     type: effort_controllers/JointPositionController
-    pid: {p: 1.0, i: 0.0, d: 0.0}
+    pid: {p: 1.0, i: 0.01, d: 0.1}
   right_front_axle_ctrlr:
     joint: right_front_axle
     type: effort_controllers/JointPositionController
-    pid: {p: 1.0, i: 0.0, d: 0.0}
+    pid: {p: 1.0, i: 0.01, d: 0.1}
   left_rear_axle_ctrlr:
     joint: left_rear_axle
     type: effort_controllers/JointPositionController
-    pid: {p: 1.0, i: 0.0, d: 0.0}
+    pid: {p: 1.0, i: 0.01, d: 0.1}
   right_rear_axle_ctrlr:
     type: effort_controllers/JointPositionController
     joint: right_rear_axle
-    pid: {p: 1.0, i: 0.0, d: 0.0}
+    pid: {p: 1.0, i: 0.01, d: 0.1}
 
   # The proportional gain of each shock absorber controller is
   # 2 * (shock_stroke * shock_spring_constant / wheel_travel). shock_stroke is
