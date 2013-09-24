@@ -20,19 +20,14 @@ limitations under the License.
 -->
 
 <launch>
-  <!-- Load the vehicle's description onto the parameter server. -->
-  <param name="robot_description"
-         command="$(find xacro)/xacro.py $(find ackermann_vehicle_description)/urdf/em_3905.urdf.xacro"/>
+  <include file="$(find ackermann_vehicle_description)/launch/ackermann_vehicle.launch"/>
 
-  <!-- Publish the joint states and display them in a GUI. Publish the
-       vehicle's state to tf. -->
+  <!-- Read joint positions from a GUI, then publish them to joint_states. -->
   <node name="joint_state_publisher" pkg="joint_state_publisher"
-        type="joint_state_publisher">
+        type="joint_state_publisher" ns="ackermann_vehicle">
+    <param name="rate" value="30"/>
     <param name="use_gui" value="true"/>
   </node>
-  <node name="vehicle_state_publisher" pkg="robot_state_publisher"
-        type="state_publisher"/>
 
-  <!-- Launch rviz. -->
-  <node name="rviz" pkg="rviz" type="rviz"/>
+  <include file="$(find ackermann_vehicle_description)/launch/rviz.launch"/>
 </launch>
