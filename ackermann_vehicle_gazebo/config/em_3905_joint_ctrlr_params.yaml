@@ -1,14 +1,14 @@
-# em_3905_ros_ctrlr_params.yaml
+# em_3905_joint_ctrlr_params.yaml
 #
-# This file defines controller parameter values used for simulating a
+# This file defines joint controller parameter values used for simulating a
 # Traxxas(R) E-Maxx(R) #3905 RC (Radio Controlled) truck.
 #
 # Traxxas(R) and E-Maxx(R) are registered trademarks of Traxxas Management,
-# LLC. em_3905_ros_ctrlr_params.yaml was independently created by Wunderkammer
-# Laboratory, and neither em_3905_ros_ctrlr_params.yaml nor Wunderkammer
-# Laboratory is affiliated with, sponsored by, approved by, or endorsed by
-# Traxxas Management, LLC. All other trademarks and service marks are the
-# property of their respective owners.
+# LLC. em_3905_joint_ctrlr_params.yaml was independently created by
+# Wunderkammer Laboratory, and neither em_3905_ros_ctrlr_params.yaml nor
+# Wunderkammer Laboratory is affiliated with, sponsored by, approved by, or
+# endorsed by Traxxas Management, LLC. All other trademarks and service marks
+# are the property of their respective owners.
 #
 # Copyright (c) 2013 Wunderkammer Laboratory
 #
