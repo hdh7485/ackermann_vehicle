@@ -13,11 +13,13 @@ the link only serves to connect two joints. To be visible in Gazebo, a link
 must have a collision element. Furthermore, the link must have a Gazebo
 material.
 
-Traxxas(R) and E-Maxx(R) are registered trademarks of Traxxas Management, LLC.
-em_3905.urdf.xacro was independently created by Wunderkammer Laboratory, and
-neither em_3905.urdf.xacro nor Wunderkammer Laboratory is affiliated with,
-sponsored by, approved by, or endorsed by Traxxas Management, LLC. All other
-trademarks and service marks are the property of their respective owners.
+Traxxas(R), E-Maxx(R), and Titan(R) are registered trademarks of Traxxas
+Management, LLC. em_3905.urdf.xacro was independently created by Wunderkammer
+Laboratory, and neither em_3905.urdf.xacro nor Wunderkammer Laboratory is
+affiliated with, sponsored by, approved by, or endorsed by Traxxas Management,
+LLC. Mabuchi Motor(R) is a registered trademark of Mabuchi Motor Co., Ltd.
+Corporation Japan. All other trademarks and service marks are the property of
+their respective owners.
 
 Copyright (c) 2011-2013 Wunderkammer Laboratory
 
@@ -63,7 +65,7 @@ limitations under the License.
        respectively. hex_hub_depth is the distance that the hex hub is
        inset from the outer edge of the tire. It is set so that each wheel
        is a "zero offset" wheel. hex_hub_depth = tire_width / 2 -
-       axle_length. xacro cannot compute hex_hub_depth's value. -->
+       axle_length. -->
   <xacro:property name="hub_dia" value="0.09652"/>
   <xacro:property name="tire_dia" value="0.14605"/>
   <xacro:property name="tire_width" value="0.0889"/>
@@ -80,15 +82,35 @@ limitations under the License.
   <xacro:property name="wheel_travel" value="0.084"/>
   <xacro:property name="shock_z_offset" value="0.0655"/>
 
-  <!-- These constants are used to simulate a Traxxas 2056 servo operated at
-       6 V. no_load_speed is measured in rad/s. stall_torque is measured in
-       N m. -->
-  <xacro:property name="no_load_speed" value="4.553"/>
-  <xacro:property name="stall_torque" value="0.5649"/>
+  <!-- shock_eff_limit is 2 * ((shock_stroke / 2) * shock_spring_constant) N.
+       shock_stroke is 0.028575 meters. shock_spring_constant, an approximation
+       of a Traxxas Ultra Shock shock absorber spring's constant, is
+       437.817 N/m. -->
+  <xacro:property name="shock_eff_limit" value="12.5106"/>
+  <xacro:property name="shock_vel_limit" value="1000"/>
 
-  <!-- ctrl_period is the control period for the ros_control plug-in. It is
-       measured in seconds. -->
-  <xacro:property name="ctrl_period" value="0.001"/>
+  <!-- The specifications for a Titan(R) 550 motor could not be found, so the
+       stall torque of a Mabuchi Motor(R) RS-550VC-7525 motor was used instead.
+
+       num_spur_gear_teeth = 68
+       num_pinion_gear_teeth = 19
+       final_gear_ratio = (num_spur_gear_teeth / num_pinion_gear_teeth) *
+         5.22 = 18.68
+       stall_torque = 0.549 N m
+       axle_eff_limit = ((2 * stall_torque) * final_gear_ratio) / 4 =
+         5.12766 N m
+
+       max_speed = 40 mph (30+ mph) = 17.8816 m/s
+       axle_vel_limit = (2 * pi) * (max_speed / (pi * tire_dia)) =
+         244.8696 rad/s -->
+  <xacro:property name="axle_eff_limit" value="5.12766"/>
+  <xacro:property name="axle_vel_limit" value="244.8696"/>
+
+  <!-- These constants are used to simulate a Traxxas 2056 servo operated at
+       6 V. servo_stall_torque is measured in N m. servo_no_load_speed is
+       measured in rad/s. -->
+  <xacro:property name="servo_stall_torque" value="0.5649"/>
+  <xacro:property name="servo_no_load_speed" value="4.553"/>
 
   <material name="battery_mat">
     <color rgba="0 0 1 1"/>
@@ -203,13 +225,14 @@ limitations under the License.
                    ${(wheel_travel / 2) - shock_z_offset}"/>
       <axis xyz="0 0 -1"/>
       <limit lower="${-wheel_travel / 2}" upper="${wheel_travel / 2}"
-             effort="1000" velocity="1000"/>
+             effort="${shock_eff_limit}" velocity="${shock_vel_limit}"/>
     </joint>
     <transmission name="${lr_prefix}_${fr_prefix}_shock_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${lr_prefix}_${fr_prefix}_shock"/>
       <actuator name="${lr_prefix}_${fr_prefix}_shock_act">
         <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
       </actuator>
     </transmission>
   </xacro:macro>
@@ -227,13 +250,14 @@ limitations under the License.
       <child link="${lr_prefix}_${fr_prefix}_wheel"/>
       <origin rpy="${degrees_90} 0 0"/>
       <axis xyz="0 0 -1"/>
-      <limit effort="1000" velocity="1000"/>
+      <limit effort="${axle_eff_limit}" velocity="${axle_vel_limit}"/>
     </joint>
     <transmission name="${lr_prefix}_${fr_prefix}_axle_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${lr_prefix}_${fr_prefix}_axle"/>
       <actuator name="${lr_prefix}_${fr_prefix}_axle_act">
         <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
       </actuator>
     </transmission>
 
@@ -285,13 +309,14 @@ limitations under the License.
       <child link="${lr_prefix}_${fr_prefix}_axle_carrier"/>
       <axis xyz="0 0 1"/>
       <limit lower="${-degrees_45}" upper="${degrees_45}"
-             effort="${stall_torque}" velocity="${no_load_speed}"/>
+             effort="${servo_stall_torque}" velocity="${servo_no_load_speed}"/>
     </joint>
     <transmission name="${lr_prefix}_steering_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${lr_prefix}_steering_joint"/>
       <actuator name="${lr_prefix}_steering_act">
         <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
       </actuator>
     </transmission>
 
@@ -341,8 +366,8 @@ limitations under the License.
     </collision>
 
     <xacro:solid_cuboid_inertial
-       width="${chassis_length}" depth="${chassis_width}"
-       height="${chassis_height}" mass="${chassis_mass}">
+        width="${chassis_length}" depth="${chassis_width}"
+        height="${chassis_height}" mass="${chassis_mass}">
       <origin xyz="0 0 ${-chassis_height / 2}"/>
     </xacro:solid_cuboid_inertial>
   </link>
@@ -351,8 +376,8 @@ limitations under the License.
   </gazebo>
 
   <joint name="base_link_to_chasis" type="fixed">
-      <parent link="base_link"/>
-      <child link="chassis"/>
+    <parent link="base_link"/>
+    <child link="chassis"/>
   </joint>
 
   <!-- Batteries -->
@@ -370,10 +395,6 @@ limitations under the License.
                     lr_reflect="-1" fr_reflect="-1"/>
 
   <gazebo>
-    <plugin name="ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>/</robotNamespace>
-      <robotParam>robot_description</robotParam>
-      <controlPeriod>${ctrl_period}</controlPeriod>
-    </plugin>
+    <plugin name="ros_control" filename="libgazebo_ros_control.so"/>
   </gazebo>
 </robot>
