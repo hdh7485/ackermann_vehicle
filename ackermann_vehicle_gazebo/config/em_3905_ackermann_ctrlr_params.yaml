@@ -24,13 +24,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-left_steering_controller_name: left_steering_ctrlr
-right_steering_controller_name: right_steering_ctrlr
+left_front_wheel:
+  diameter: 0.14605
+  axle_controller_name: left_front_axle_ctrlr
+  steering_joint_name: left_front_wheel
+  steering_controller_name: left_steering_ctrlr
 
-left_front_axle_controller_name: left_front_axle_ctrlr
-right_front_axle_controller_name: right_front_axle_ctrlr
-left_rear_axle_controller_name: left_rear_axle_ctrlr
-right_rear_axle_controller_name: right_rear_axle_ctrlr
+right_front_wheel:
+  diameter: 0.14605
+  axle_controller_name: right_front_axle_ctrlr
+  steering_joint_name: right_front_wheel
+  steering_controller_name: right_steering_ctrlr
+
+left_rear_wheel:
+  diameter: 0.14605
+  axle_controller_name: left_rear_axle_ctrlr
+  axle_joint_name: left_rear_wheel
+
+right_rear_wheel:
+  diameter: 0.14605
+  axle_controller_name: right_rear_axle_ctrlr
+  axle_joint_name: right_rear_wheel
 
 # The equilibrium position of each shock absorber is wheel_travel / 2.
 # wheel_travel, defined in em_3905.urdf.xacro, is 0.084 meters.
