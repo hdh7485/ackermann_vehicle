@@ -25,24 +25,24 @@
 # limitations under the License.
 
 left_front_wheel:
-  steering_joint_name: left_front_wheel
+  steering_link_name: left_front_wheel
   steering_controller_name: left_steering_ctrlr
   axle_controller_name: left_front_axle_ctrlr
   diameter: 0.14605
 
 right_front_wheel:
-  steering_joint_name: right_front_wheel
+  steering_link_name: right_front_wheel
   steering_controller_name: right_steering_ctrlr
   axle_controller_name: right_front_axle_ctrlr
   diameter: 0.14605
 
 left_rear_wheel:
-  axle_joint_name: left_rear_wheel
+  wheel_link_name: left_rear_wheel
   axle_controller_name: left_rear_axle_ctrlr
   diameter: 0.14605
 
 right_rear_wheel:
-  axle_joint_name: right_rear_wheel
+  wheel_link_name: right_rear_wheel
   axle_controller_name: right_rear_axle_ctrlr
   diameter: 0.14605
 
