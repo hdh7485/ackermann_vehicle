@@ -152,7 +152,7 @@ class _AckermannCtrlr(object):
         rear_cent_pos = (lrw_pos + rrw_pos) / 2    # Rear center position
         self._wheelbase = numpy.linalg.norm(front_cent_pos - rear_cent_pos)
         self._inv_wheelbase = 1 / self._wheelbase  # Inverse of _wheelbase
-        self._wheelbase_sqr = pow(self._wheelbase, 2)
+        self._wheelbase_sqr = self._wheelbase ** 2
 
         # Subscribers and publishers
 
@@ -374,13 +374,13 @@ class _AckermannCtrlr(object):
             self._last_speed = veh_speed
 
             # Left front
-            r = math.sqrt(pow(center_y - self._joint_dist_div_2, 2) +
+            r = math.sqrt(((center_y - self._joint_dist_div_2) ** 2) +
                           self._wheelbase_sqr)
             wheel_speed = r * veh_speed / abs(center_y)
             self._left_front_ang_vel = \
                 (2 * pi) * wheel_speed / self._left_front_circ
             # Right front
-            r = math.sqrt(pow(center_y + self._joint_dist_div_2, 2) +
+            r = math.sqrt(((center_y + self._joint_dist_div_2) ** 2) +
                           self._wheelbase_sqr)
             wheel_speed = r * veh_speed / abs(center_y)
             self._right_front_ang_vel = \
