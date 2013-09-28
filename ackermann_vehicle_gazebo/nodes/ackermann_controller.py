@@ -95,15 +95,12 @@ class _AckermannCtrlr(object):
 
         # Command timeout
         try:
-            timeout = float(rospy.get_param("~cmd_timeout",
-                                            self._DEF_CMD_TIMEOUT))
-            if timeout <= 0.0:
-                raise ValueError()
+            self._cmd_timeout = float(rospy.get_param("~cmd_timeout",
+                                                      self._DEF_CMD_TIMEOUT))
         except:
             rospy.logwarn("The specified command timeout value is invalid. "
                           "The default timeout value will be used instead.")
-            timeout = self._DEF_CMD_TIMEOUT
-        self._cmd_timeout = rospy.Duration.from_sec(timeout)
+            self._cmd_timeout = self._DEF_CMD_TIMEOUT
 
         # Publishing frequency
         try:
@@ -116,6 +113,10 @@ class _AckermannCtrlr(object):
                           "The default frequency will be used instead.")
             pub_freq = self._DEF_PUB_FREQ
         self._sleep_timer = rospy.Rate(pub_freq)
+
+        # _last_cmd_time is the time at which the most recent Ackermann
+        # driving command was received.
+        self._last_cmd_time = rospy.get_time()
 
         # _ackermann_cmd_lock is used to control access to _steer_ang,
         # _steer_ang_vel, _speed, _accel, and _jerk.
@@ -176,10 +177,17 @@ class _AckermannCtrlr(object):
         while not rospy.is_shutdown():
             t = rospy.get_time()
             delta_t = t - last_time
-            # TODO: If too much time has elapsed since the last velocity
-            # command was received, stop the robot.
-            if delta_t > 0.0:
-                last_time = t
+            last_time = t
+
+            if (self._cmd_timeout > 0.0 and
+                t - self._last_cmd_time > self._cmd_timeout):
+                # Too much time has elapsed since the last command. Stop the
+                # vehicle.
+                steer_ang_changed, center_y = \
+                    self._ctrl_steering(self._last_steer_ang, 0.0, 0.001)
+                self._ctrl_axles(0.0, 0.0, 0.0, 0.001, steer_ang_changed,
+                                 center_y)
+            elif delta_t > 0.0:
                 with self._ackermann_cmd_lock:
                     steer_ang = self._steer_ang
                     steer_ang_vel = self._steer_ang_vel
@@ -190,6 +198,19 @@ class _AckermannCtrlr(object):
                     self._ctrl_steering(steer_ang, steer_ang_vel, delta_t)
                 self._ctrl_axles(speed, accel, jerk, delta_t,
                                  steer_ang_changed, center_y)
+
+            # Publish the steering and axle joint commands.
+            self._left_steer_cmd_pub.publish(self._theta_left)
+            self._right_steer_cmd_pub.publish(self._theta_right)
+            if self._left_front_axle_cmd_pub:
+                self._left_front_axle_cmd_pub.publish(self._left_front_ang_vel)
+            if self._right_front_axle_cmd_pub:
+                self._right_front_axle_cmd_pub.\
+                    publish(self._right_front_ang_vel)
+            if self._left_rear_axle_cmd_pub:
+                self._left_rear_axle_cmd_pub.publish(self._left_rear_ang_vel)
+            if self._right_rear_axle_cmd_pub:
+                self._right_rear_axle_cmd_pub.publish(self._right_rear_ang_vel)
 
             # Even though each shock absorber command publisher is latched,
             # commands can be lost if they are published too soon after
@@ -208,6 +229,7 @@ class _AckermannCtrlr(object):
           ackermann_cmd: ackermann_msgs.msg.AckermannDriveStamped
             Ackermann driving command.
         """
+        self._last_cmd_time = rospy.get_time()
         with self._ackermann_cmd_lock:
             self._steer_ang = ackermann_cmd.drive.steering_angle
             self._steer_ang_vel = ackermann_cmd.drive.steering_angle_velocity
@@ -301,8 +323,6 @@ class _AckermannCtrlr(object):
             else:
                 self._theta_right = (-pi / 2) - phi
 
-        self._left_steer_cmd_pub.publish(self._theta_left)
-        self._right_steer_cmd_pub.publish(self._theta_right)
         return steer_ang_changed, center_y
 
     def _ctrl_axles(self, speed, accel_limit, jerk_limit, delta_t,
@@ -357,15 +377,6 @@ class _AckermannCtrlr(object):
                 (center_y + self._joint_dist_div_2) * veh_speed / center_y
             self._right_rear_ang_vel = \
                 (2 * pi) * wheel_speed / self._right_rear_circ
-
-        if self._left_front_axle_cmd_pub:
-            self._left_front_axle_cmd_pub.publish(self._left_front_ang_vel)
-        if self._right_front_axle_cmd_pub:
-            self._right_front_axle_cmd_pub.publish(self._right_front_ang_vel)
-        if self._left_rear_axle_cmd_pub:
-            self._left_rear_axle_cmd_pub.publish(self._left_rear_ang_vel)
-        if self._right_rear_axle_cmd_pub:
-            self._right_rear_axle_cmd_pub.publish(self._right_rear_ang_vel)
 
     _DEF_WHEEL_DIA = 1.0    # Default wheel diameter. Unit: meter.
     _DEF_CMD_TIMEOUT = 0.5  # Default command timeout. Unit: second.
