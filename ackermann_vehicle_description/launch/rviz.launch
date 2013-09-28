@@ -2,7 +2,7 @@
 
 <!-- rviz.launch
 
-Launch rviz in the "ackermann_vehicle" namespace.
+Launch RViz in the "ackermann_vehicle" namespace.
 
 Copyright (c) 2013 Wunderkammer Laboratory
 
@@ -20,5 +20,6 @@ limitations under the License.
 -->
 
 <launch>
-  <node name="rviz" pkg="rviz" type="rviz" ns="ackermann_vehicle"/>
+  <arg name="namespace" default="ackermann_vehicle"/>
+  <node name="rviz" pkg="rviz" type="rviz" ns="$(arg namespace)"/>
 </launch>

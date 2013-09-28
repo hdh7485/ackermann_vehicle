@@ -2,7 +2,7 @@
 
 <!-- ackermann_vehicle.launch
 
-Launch nodes used by both rviz and Gazebo when visualizing a vehicle with
+Launch nodes used by both RViz and Gazebo when visualizing a vehicle with
 Ackermann steering.
 
 Copyright (c) 2013 Wunderkammer Laboratory
@@ -21,7 +21,9 @@ limitations under the License.
 -->
 
 <launch>
-  <group ns="ackermann_vehicle">
+  <arg name="namespace" default="ackermann_vehicle"/>
+
+  <group ns="$(arg namespace)">
     <!-- robot_description is used by nodes that publish to joint_states. -->
     <param name="robot_description"
            command="$(find xacro)/xacro.py $(find ackermann_vehicle_description)/urdf/em_3905.urdf.xacro"/>

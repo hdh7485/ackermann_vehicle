@@ -2,7 +2,7 @@
 
 <!-- ackermann_vehicle_rviz.launch
 
-Use rviz to visualize a vehicle with Ackermann steering.
+Use RViz to visualize a vehicle with Ackermann steering.
 
 Copyright (c) 2013 Wunderkammer Laboratory
 
@@ -20,14 +20,20 @@ limitations under the License.
 -->
 
 <launch>
-  <include file="$(find ackermann_vehicle_description)/launch/ackermann_vehicle.launch"/>
+  <arg name="namespace" default="ackermann_vehicle"/>
+
+  <include file="$(find ackermann_vehicle_description)/launch/ackermann_vehicle.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+  </include>
 
   <!-- Read joint positions from a GUI, then publish them to joint_states. -->
   <node name="joint_state_publisher" pkg="joint_state_publisher"
-        type="joint_state_publisher" ns="ackermann_vehicle">
+        type="joint_state_publisher" ns="$(arg namespace)">
     <param name="rate" value="30"/>
     <param name="use_gui" value="true"/>
   </node>
 
-  <include file="$(find ackermann_vehicle_description)/launch/rviz.launch"/>
+  <include file="$(find ackermann_vehicle_description)/launch/rviz.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+  </include>
 </launch>
