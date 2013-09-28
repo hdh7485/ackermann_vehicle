@@ -35,6 +35,7 @@ TODO
 """
 
 import math
+import numpy
 import threading
 
 from math import pi
@@ -61,16 +62,16 @@ class _AckermannCtrlr(object):
         # Parameters
 
         # Wheels
-        (left_steer_joint_name, left_steer_ctrlr_name,
+        (left_steer_link_name, left_steer_ctrlr_name,
          left_front_axle_ctrlr_name, self._left_front_circ) = \
          self._get_front_wheel_params("left")
-        (right_steer_joint_name, right_steer_ctrlr_name,
+        (right_steer_link_name, right_steer_ctrlr_name,
          right_front_axle_ctrlr_name, self._right_front_circ) = \
          self._get_front_wheel_params("right")
-        (left_rear_axle_joint_name, left_rear_axle_ctrlr_name,
+        (left_rear_wheel_link_name, left_rear_axle_ctrlr_name,
          self._left_rear_circ) = \
          self._get_rear_wheel_params("left")
-        (right_rear_axle_joint_name, right_rear_axle_ctrlr_name,
+        (self._right_rear_wheel_link_name, right_rear_axle_ctrlr_name,
          self._right_rear_circ) = \
          self._get_rear_wheel_params("right")
 
@@ -140,14 +141,17 @@ class _AckermannCtrlr(object):
         self._right_rear_ang_vel = 0.0
 
         # _joint_dist_div_2 is the distance between the steering joints,
-        # divided by two. inv_wheelbase_ is the inverse of wheelbase_.
-        tf_listener = tf.TransformListener()
-        lf_pos = _get_link_pos(tf_listener, left_steer_joint_name)
-        rf_pos = _get_link_pos(tf_listener, right_steer_joint_name)
-        self._joint_dist_div_2 = abs(lf_pos[1] - rf_pos[1]) / 2  # TODO
-        lr_pos = _get_link_pos(tf_listener, left_rear_axle_joint_name)
-        self._wheelbase = abs(lf_pos[0] - lr_pos[0])  # TODO
-        self._inv_wheelbase = 1 / self._wheelbase
+        # divided by two.
+        tfl = tf.TransformListener()
+        ls_pos = self._get_link_pos(tfl, left_steer_link_name)
+        rs_pos = self._get_link_pos(tfl, right_steer_link_name)
+        self._joint_dist_div_2 = numpy.linalg.norm(ls_pos - rs_pos) / 2
+        lrw_pos = self._get_link_pos(tfl, left_rear_wheel_link_name)
+        rrw_pos = numpy.array([0.0] * 3)
+        front_cent_pos = (ls_pos + rs_pos) / 2     # Front center position
+        rear_cent_pos = (lrw_pos + rrw_pos) / 2    # Rear center position
+        self._wheelbase = numpy.linalg.norm(front_cent_pos - rear_cent_pos)
+        self._inv_wheelbase = 1 / self._wheelbase  # Inverse of _wheelbase
         self._wheelbase_sqr = pow(self._wheelbase, 2)
 
         # Subscribers and publishers
@@ -248,25 +252,26 @@ class _AckermannCtrlr(object):
 
     def _get_front_wheel_params(self, side):
         # Get front wheel parameters. Return a tuple containing the steering
-        # joint name, steering controller name, axle controller name
-        # (or None), and wheel circumference.
+        # link name, steering controller name, axle controller name (or None),
+        # and wheel circumference.
 
         prefix = "~" + side + "_front_wheel/"
-        steer_joint_name = rospy.get_param(prefix + "steering_joint_name",
-                                           side + "_steering_joint")
+        steer_link_name = rospy.get_param(prefix + "steering_link_name",
+                                          side + "_steering_link")
         steer_ctrlr_name = rospy.get_param(prefix + "steering_controller_name",
                                            side + "_steering_controller")
         axle_ctrlr_name, circ = self._get_common_wheel_params(prefix)
-        return steer_joint_name, steer_ctrlr_name, axle_ctrlr_name, circ
+        return steer_link_name, steer_ctrlr_name, axle_ctrlr_name, circ
 
     def _get_rear_wheel_params(self, side):
-        # Get rear wheel parameters.
+        # Get rear wheel parameters. Return a tuple containing the wheel link
+        # name, axle controller name, and wheel circumference.
 
         prefix = "~" + side + "_rear_wheel/"
-        axle_joint_name = rospy.get_param(prefix + "axle_joint_name",
-                                          side + "_axle_joint")
+        wheel_link_name = rospy.get_param(prefix + "wheel_link_name",
+                                          side + "_wheel")
         axle_ctrlr_name, circ = self._get_common_wheel_params(prefix)
-        return axle_joint_name, axle_ctrlr_name, circ
+        return wheel_link_name, axle_ctrlr_name, circ
 
     def _get_common_wheel_params(self, prefix):
         # Get parameters used by the front and rear wheels. Return a tuple
@@ -287,6 +292,19 @@ class _AckermannCtrlr(object):
             dia = self._DEF_WHEEL_DIA
 
         return axle_ctrlr_name, pi * dia
+
+    def _get_link_pos(self, tfl, link):
+        # Return the position of the specified link, relative to the right
+        # rear wheel link.
+
+        while True:
+            try:
+                trans, not_used = \
+                    tfl.lookupTransform(self._right_rear_wheel_link_name,
+                                        link, rospy.Time(0))
+                return numpy.array(trans)
+            except:
+                pass
 
     def _ctrl_steering(self, steer_ang, steer_ang_vel_limit, delta_t):
         # Control the steering joints.
@@ -384,18 +402,6 @@ class _AckermannCtrlr(object):
 
     _SHOCK_CMD_PERIOD = 1.0 # Shock absorber command period. Unit: second.
 # end _AckermannCtrlr
-
-
-def _get_link_pos(tf_listener, link):
-    # Return the xy position of the specified link, relative to base_link.
-
-    while True:
-        try:
-            trans, not_used = \
-                tf_listener.lookupTransform("base_link", link, rospy.Time(0))
-            return (trans[0], trans[1])
-        except:
-            pass
 
 
 def _create_axle_cmd_pub(axle_ctrlr_name):
