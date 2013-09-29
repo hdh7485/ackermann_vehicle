@@ -10,28 +10,87 @@ Subscribed Topics:
         angle.
 
 Published Topics:
-    TODO
+    <left steering controller name>/command (std_msgs/Float64)
+        Command for the left steering controller.
+    <right steering controller name>/command (std_msgs/Float64)
+        Command for the right steering controller.
+    <left front axle controller name>/command (std_msgs/Float64)
+        Command for the left front axle controller.
+    <right front axle controller name>/command (std_msgs/Float64)
+        Command for the right front axle controller.
+    <left rear axle controller name>/command (std_msgs/Float64)
+        Command for the left rear axle controller.
+    <right rear axle controller name>/command (std_msgs/Float64)
+        Command for the right rear axle controller.
+    <shock absorber controller name>/command (std_msgs/Float64)
+        One of these topics exists for each shock absorber. These are latched
+        topics.
 
 Parameters:
-    left_front_shock_name
-    left_front_shock_spring_constant
-    left_front_shock_damping_coefficient
-    left_front_shock_equilibrium_position
-    left_front_axle_controller_name
+    ~left_front_wheel/steering_link_name (string, default: left_steering_link)
+    ~right_front_wheel/steering_link_name (string,
+                                           default: right_steering_link)
+        Names of links that have origins coincident with the origins of the
+        left and right steering joints, respectively. The steering links are
+        used to compute the distance between the steering joints, as well as
+        the vehicle's wheelbase.
 
-    left_steering_controller_name
-    right_steering_controller_name
+    ~left_front_wheel/steering_controller_name (string, default:
+                                                left_steering_controller)
+    ~right_front_wheel/steering_controller_name (string, default:
+                                                 right_steering_controller)
+        Steering controller names.
+
+    ~left_rear_wheel/link_name (string, default: left_wheel)
+    ~right_rear_wheel/link_name (string, default: right_wheel)
+        Name of links that have origins coincident with the centers of the
+        left and right wheels, respectively. The rear wheel links are used to
+        compute the vehicle's wheelbase.
+
+    ~left_front_wheel/axle_controller_name (string)
+    ~right_front_wheel/axle_controller_name
+    ~left_rear_wheel/axle_controller_name
+    ~right_rear_wheel/axle_controller_name
+        Axle controller names. If no controller name is specified for an axle,
+        that axle will not have a controller. This allows the control of
+        front-wheel, rear-wheel, and four-wheel drive vehicles.
+
+    ~left_front_wheel/diameter (float, default: 1.0)
+    ~right_front_wheel/diameter
+    ~left_rear_wheel/diameter
+    ~right_rear_wheel/diameter
+        Wheel diameters. Each diameter must be greater than zero. Unit: meter.
+
+    ~shock_absorbers (list, default: empty)
+        controller_name (string)
+            Shock absorber controller name.
+        equilibrium_position (float, default: 0.0)
+            The shock absorber's equilibrium position.
+
+        Zero or more shock absorbers may be specified.
 
     ~cmd_timeout (float, default: 0.5)
-        If this node does not receive a command for more than cmd_timeout
-        seconds, vehicle motion is paused until a command is received.
-        cmd_timeout must be greater than zero.
+        If cmd_timeout is greater than zero and this node does not receive a
+        command for more than cmd_timeout seconds, vehicle motion is paused
+        until a command is received. If cmd_timeout is less than or equal to
+        zero, the command timeout is disabled.
     ~publishing_frequency (float, default: 30.0)
-        Joint command publishing frequency, measured in hertz. It must
-        be greater than zero.
+        Joint command publishing frequency. It must be greater than zero.
+        Unit: hertz.
 
 Copyright (c) 2013 Wunderkammer Laboratory
-TODO
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 
 import math
@@ -63,16 +122,16 @@ class _AckermannCtrlr(object):
 
         # Wheels
         (left_steer_link_name, left_steer_ctrlr_name,
-         left_front_axle_ctrlr_name, self._left_front_circ) = \
+         left_front_axle_ctrlr_name, self._left_front_inv_circ) = \
          self._get_front_wheel_params("left")
         (right_steer_link_name, right_steer_ctrlr_name,
-         right_front_axle_ctrlr_name, self._right_front_circ) = \
+         right_front_axle_ctrlr_name, self._right_front_inv_circ) = \
          self._get_front_wheel_params("right")
-        (left_rear_wheel_link_name, left_rear_axle_ctrlr_name,
-         self._left_rear_circ) = \
+        (left_rear_link_name, left_rear_axle_ctrlr_name,
+         self._left_rear_inv_circ) = \
          self._get_rear_wheel_params("left")
-        (self._right_rear_wheel_link_name, right_rear_axle_ctrlr_name,
-         self._right_rear_circ) = \
+        (self._right_rear_link_name, right_rear_axle_ctrlr_name,
+         self._right_rear_inv_circ) = \
          self._get_rear_wheel_params("right")
 
         # Shock absorbers
@@ -82,7 +141,11 @@ class _AckermannCtrlr(object):
             for shock_params in shock_param_list:
                 try:
                     ctrlr_name = shock_params["controller_name"]
-                    eq_pos = float(shock_params["equilibrium_position"])
+                    try:
+                        eq_pos = shock_params["equilibrium_position"]
+                    except:
+                        eq_pos = self._DEF_EQ_POS
+                    eq_pos = float(eq_pos)
                 except:
                     rospy.logwarn("An invalid parameter was specified for a "
                                   "shock absorber. The shock absorber will "
@@ -146,7 +209,7 @@ class _AckermannCtrlr(object):
         ls_pos = self._get_link_pos(tfl, left_steer_link_name)
         rs_pos = self._get_link_pos(tfl, right_steer_link_name)
         self._joint_dist_div_2 = numpy.linalg.norm(ls_pos - rs_pos) / 2
-        lrw_pos = self._get_link_pos(tfl, left_rear_wheel_link_name)
+        lrw_pos = self._get_link_pos(tfl, left_rear_link_name)
         rrw_pos = numpy.array([0.0] * 3)
         front_cent_pos = (ls_pos + rs_pos) / 2     # Front center position
         rear_cent_pos = (lrw_pos + rrw_pos) / 2    # Rear center position
@@ -243,9 +306,11 @@ class _AckermannCtrlr(object):
 
     class _ShockAbsorber(object):
         def __init__(self, ctrlr_name, eq_position):
+            # ctrlr_name: Controller name
+            # eq_position: Equilibrium position
             self._cmd_pub = rospy.Publisher(ctrlr_name + "/command", Float64,
                                             latch=True)
-            self._eq_pos = eq_position  # Equilibrium position
+            self._eq_pos = eq_position
 
         def publish_cmd(self):
             self._cmd_pub.publish(self._eq_pos)
@@ -253,29 +318,28 @@ class _AckermannCtrlr(object):
     def _get_front_wheel_params(self, side):
         # Get front wheel parameters. Return a tuple containing the steering
         # link name, steering controller name, axle controller name (or None),
-        # and wheel circumference.
+        # and inverse of the circumference.
 
         prefix = "~" + side + "_front_wheel/"
         steer_link_name = rospy.get_param(prefix + "steering_link_name",
                                           side + "_steering_link")
         steer_ctrlr_name = rospy.get_param(prefix + "steering_controller_name",
                                            side + "_steering_controller")
-        axle_ctrlr_name, circ = self._get_common_wheel_params(prefix)
-        return steer_link_name, steer_ctrlr_name, axle_ctrlr_name, circ
+        axle_ctrlr_name, inv_circ = self._get_common_wheel_params(prefix)
+        return steer_link_name, steer_ctrlr_name, axle_ctrlr_name, inv_circ
 
     def _get_rear_wheel_params(self, side):
-        # Get rear wheel parameters. Return a tuple containing the wheel link
-        # name, axle controller name, and wheel circumference.
+        # Get rear wheel parameters. Return a tuple containing the link name,
+        # axle controller name, and inverse of the circumference.
 
         prefix = "~" + side + "_rear_wheel/"
-        wheel_link_name = rospy.get_param(prefix + "wheel_link_name",
-                                          side + "_wheel")
-        axle_ctrlr_name, circ = self._get_common_wheel_params(prefix)
-        return wheel_link_name, axle_ctrlr_name, circ
+        link_name = rospy.get_param(prefix + "link_name", side + "_wheel")
+        axle_ctrlr_name, inv_circ = self._get_common_wheel_params(prefix)
+        return link_name, axle_ctrlr_name, inv_circ
 
     def _get_common_wheel_params(self, prefix):
         # Get parameters used by the front and rear wheels. Return a tuple
-        # containing the axle controller name (or None) and the wheel
+        # containing the axle controller name (or None) and the inverse of the
         # circumference.
 
         axle_ctrlr_name = rospy.get_param(prefix + "axle_controller_name",
@@ -291,7 +355,7 @@ class _AckermannCtrlr(object):
                           "The default diameter will be used instead.")
             dia = self._DEF_WHEEL_DIA
 
-        return axle_ctrlr_name, pi * dia
+        return axle_ctrlr_name, 1 / (pi * dia)
 
     def _get_link_pos(self, tfl, link):
         # Return the position of the specified link, relative to the right
@@ -300,8 +364,8 @@ class _AckermannCtrlr(object):
         while True:
             try:
                 trans, not_used = \
-                    tfl.lookupTransform(self._right_rear_wheel_link_name,
-                                        link, rospy.Time(0))
+                    tfl.lookupTransform(self._right_rear_link_name, link, 
+                                        rospy.Time(0))
                 return numpy.array(trans)
             except:
                 pass
@@ -325,21 +389,12 @@ class _AckermannCtrlr(object):
         steer_ang_changed = theta != self._last_steer_ang
         if steer_ang_changed:
             self._last_steer_ang = theta
-
-            # Left wheel
-            phi = math.atan(self._inv_wheelbase *
-                            (center_y - self._joint_dist_div_2))
-            if phi >= 0.0:
-                self._theta_left = (pi / 2) - phi
-            else:
-                self._theta_left = (-pi / 2) - phi
-            # Right wheel
-            phi = math.atan(self._inv_wheelbase *
-                            (center_y + self._joint_dist_div_2))
-            if phi >= 0.0:
-                self._theta_right = (pi / 2) - phi
-            else:
-                self._theta_right = (-pi / 2) - phi
+            self._theta_left = \
+                _get_steer_ang(math.atan(self._inv_wheelbase *
+                                         (center_y - self._joint_dist_div_2)))
+            self._theta_right = \
+                _get_steer_ang(math.atan(self._inv_wheelbase *
+                                         (center_y + self._joint_dist_div_2)))
 
         return steer_ang_changed, center_y
 
@@ -372,31 +427,24 @@ class _AckermannCtrlr(object):
         # Compute the desired angular velocities of the wheels.
         if veh_speed != self._last_speed or steer_ang_changed:
             self._last_speed = veh_speed
+            left_dist = center_y - self._joint_dist_div_2
+            right_dist = center_y + self._joint_dist_div_2
 
-            # Left front
-            r = math.sqrt(((center_y - self._joint_dist_div_2) ** 2) +
-                          self._wheelbase_sqr)
-            wheel_speed = r * veh_speed / abs(center_y)
-            self._left_front_ang_vel = \
-                (2 * pi) * wheel_speed / self._left_front_circ
-            # Right front
-            r = math.sqrt(((center_y + self._joint_dist_div_2) ** 2) +
-                          self._wheelbase_sqr)
-            wheel_speed = r * veh_speed / abs(center_y)
-            self._right_front_ang_vel = \
-                (2 * pi) * wheel_speed / self._right_front_circ
-            # Left rear
-            wheel_speed = \
-                (center_y - self._joint_dist_div_2) * veh_speed / center_y
+            # Front
+            gain = (2 * pi) * veh_speed / abs(center_y)
+            r = math.sqrt(left_dist ** 2 + self._wheelbase_sqr)
+            self._left_front_ang_vel = gain * r * self._left_front_inv_circ
+            r = math.sqrt(right_dist ** 2 + self._wheelbase_sqr)
+            self._right_front_ang_vel = gain * r * self._right_front_inv_circ
+            # Rear
+            gain = (2 * pi) * veh_speed / center_y
             self._left_rear_ang_vel = \
-                (2 * pi) * wheel_speed / self._left_rear_circ
-            # Right rear
-            wheel_speed = \
-                (center_y + self._joint_dist_div_2) * veh_speed / center_y
+                gain * left_dist * self._left_rear_inv_circ
             self._right_rear_ang_vel = \
-                (2 * pi) * wheel_speed / self._right_rear_circ
+                gain * right_dist * self._right_rear_inv_circ
 
     _DEF_WHEEL_DIA = 1.0    # Default wheel diameter. Unit: meter.
+    _DEF_EQ_POS = 0.0       # Default equilibrium position. Unit: meter.
     _DEF_CMD_TIMEOUT = 0.5  # Default command timeout. Unit: second.
     _DEF_PUB_FREQ = 30.0    # Default publishing frequency. Unit: hertz.
 
@@ -414,6 +462,13 @@ def _create_axle_cmd_pub(axle_ctrlr_name):
 def _create_cmd_pub(ctrlr_name):
     # Create a command publisher.
     return rospy.Publisher(ctrlr_name + "/command", Float64)
+
+
+def _get_steer_ang(phi):
+    # Return the desired steering angle for a front wheel.
+    if phi >= 0.0:
+        return (pi / 2) - phi
+    return (-pi / 2) - phi
 
 
 # main
