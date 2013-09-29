@@ -280,9 +280,9 @@ class _AckermannCtrlr(object):
                 self._right_rear_axle_cmd_pub.publish(self._right_rear_ang_vel)
 
             # Even though each shock absorber command publisher is latched,
-            # commands can be lost if they are published too soon after
-            # the publisher is created. Therefore, they are published here
-            # periodically.
+            # commands are ignored if they are published too soon after
+            # the publisher is created. The cause of this problem is unknown.
+            # To work around it, the commands are published here periodically.
             if t - last_shock_cmd_time >= self._SHOCK_CMD_PERIOD:
                 last_shock_cmd_time = t
                 for shock in self._shock_absorbers:
