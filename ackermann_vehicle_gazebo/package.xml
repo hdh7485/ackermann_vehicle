@@ -36,7 +36,9 @@
   <run_depend>controller_manager</run_depend>
   <run_depend>gazebo_ros</run_depend>
   <run_depend>gazebo_ros_control</run_depend>
+  <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
+  <run_depend>tf</run_depend>
   <run_depend>xacro</run_depend>
 
   <export>
