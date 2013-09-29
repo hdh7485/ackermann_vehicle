@@ -37,12 +37,12 @@ right_front_wheel:
   diameter: 0.14605
 
 left_rear_wheel:
-  wheel_link_name: left_rear_wheel
+  link_name: left_rear_wheel
   axle_controller_name: left_rear_axle_ctrlr
   diameter: 0.14605
 
 right_rear_wheel:
-  wheel_link_name: right_rear_wheel
+  link_name: right_rear_wheel
   axle_controller_name: right_rear_axle_ctrlr
   diameter: 0.14605
 
