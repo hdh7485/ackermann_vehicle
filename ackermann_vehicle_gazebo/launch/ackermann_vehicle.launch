@@ -22,6 +22,7 @@ limitations under the License.
 <launch>
   <arg name="namespace" default="ackermann_vehicle"/>
   <arg name="world_name" default="worlds/empty.world"/>
+  <arg name="cmd_timeout" default="0.5"/>
 
   <!-- Vehicle pose -->
   <arg name="x" default="0"/>
@@ -53,8 +54,10 @@ limitations under the License.
     <node name="controller_spawner" pkg="controller_manager" type="spawner"
           args="$(find ackermann_vehicle_gazebo)/config/em_3905_joint_ctrlr_params.yaml"/>
 
+    <!-- Control the steering, axle, and shock absorber joints. -->
     <node name="ackermann_controller" pkg="ackermann_vehicle_gazebo"
           type="ackermann_controller.py">
+      <param name="cmd_timeout" value="$(arg cmd_timeout)"/>
       <rosparam file="$(find ackermann_vehicle_gazebo)/config/em_3905_ackermann_ctrlr_params.yaml" command="load"/>
     </node>
   </group>
