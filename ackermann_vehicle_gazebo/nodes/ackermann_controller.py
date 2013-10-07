@@ -104,6 +104,7 @@ import tf
 
 from ackermann_msgs.msg import AckermannDriveStamped
 from std_msgs.msg import Float64
+from controller_manager_msgs.srv import ListControllers
 
 
 class _AckermannCtrlr(object):
@@ -134,9 +135,13 @@ class _AckermannCtrlr(object):
          self._right_rear_inv_circ) = \
          self._get_rear_wheel_params("right")
 
+        list_ctrlrs = rospy.ServiceProxy("controller_manager/list_controllers",
+                                         ListControllers)
+        list_ctrlrs.wait_for_service()
+
         # Shock absorbers
         shock_param_list = rospy.get_param("~shock_absorbers", [])
-        self._shock_absorbers = []
+        self._shock_pubs = []
         try:
             for shock_params in shock_param_list:
                 try:
@@ -151,8 +156,12 @@ class _AckermannCtrlr(object):
                                   "shock absorber. The shock absorber will "
                                   "not be used.")
                     continue
-                shock = self._ShockAbsorber(ctrlr_name, eq_pos)
-                self._shock_absorbers.append(shock)
+
+                pub = rospy.Publisher(ctrlr_name + "/command", Float64,
+                                      latch=True)
+                _wait_for_ctrlr(list_ctrlrs, ctrlr_name)
+                pub.publish(eq_pos)
+                self._shock_pubs.append(pub)
         except:
             rospy.logwarn("The specified list of shock absorbers is invalid. "
                           "No shock absorbers will be used.")
@@ -223,23 +232,24 @@ class _AckermannCtrlr(object):
             rospy.Subscriber("ackermann_cmd", AckermannDriveStamped,
                              self.ackermann_cmd_cb, queue_size=1)
 
-        self._left_steer_cmd_pub = _create_cmd_pub(left_steer_ctrlr_name)
-        self._right_steer_cmd_pub = _create_cmd_pub(right_steer_ctrlr_name)
+        self._left_steer_cmd_pub = \
+            _create_cmd_pub(list_ctrlrs, left_steer_ctrlr_name)
+        self._right_steer_cmd_pub = \
+            _create_cmd_pub(list_ctrlrs, right_steer_ctrlr_name)
 
         self._left_front_axle_cmd_pub = \
-            _create_axle_cmd_pub(left_front_axle_ctrlr_name)
+            _create_axle_cmd_pub(list_ctrlrs, left_front_axle_ctrlr_name)
         self._right_front_axle_cmd_pub = \
-            _create_axle_cmd_pub(right_front_axle_ctrlr_name)
+            _create_axle_cmd_pub(list_ctrlrs, right_front_axle_ctrlr_name)
         self._left_rear_axle_cmd_pub = \
-            _create_axle_cmd_pub(left_rear_axle_ctrlr_name)
+            _create_axle_cmd_pub(list_ctrlrs, left_rear_axle_ctrlr_name)
         self._right_rear_axle_cmd_pub = \
-            _create_axle_cmd_pub(right_rear_axle_ctrlr_name)
+            _create_axle_cmd_pub(list_ctrlrs, right_rear_axle_ctrlr_name)
 
     def spin(self):
         """Control the vehicle."""
 
         last_time = rospy.get_time()
-        last_shock_cmd_time = last_time
 
         while not rospy.is_shutdown():
             t = rospy.get_time()
@@ -279,14 +289,6 @@ class _AckermannCtrlr(object):
             if self._right_rear_axle_cmd_pub:
                 self._right_rear_axle_cmd_pub.publish(self._right_rear_ang_vel)
 
-            # Even though each shock absorber command publisher is latched,
-            # commands are ignored if they are published too soon after
-            # the publisher is created. The cause of this problem is unknown.
-            # To work around it, the commands are published here periodically.
-            if t - last_shock_cmd_time >= self._SHOCK_CMD_PERIOD:
-                last_shock_cmd_time = t
-                for shock in self._shock_absorbers:
-                    shock.publish_cmd()
             self._sleep_timer.sleep()
 
     def ackermann_cmd_cb(self, ackermann_cmd):
@@ -303,17 +305,6 @@ class _AckermannCtrlr(object):
             self._speed = ackermann_cmd.drive.speed
             self._accel = ackermann_cmd.drive.acceleration
             self._jerk = ackermann_cmd.drive.jerk
-
-    class _ShockAbsorber(object):
-        def __init__(self, ctrlr_name, eq_position):
-            # ctrlr_name: Controller name
-            # eq_position: Equilibrium position
-            self._cmd_pub = rospy.Publisher(ctrlr_name + "/command", Float64,
-                                            latch=True)
-            self._eq_pos = eq_position
-
-        def publish_cmd(self):
-            self._cmd_pub.publish(self._eq_pos)
 
     def _get_front_wheel_params(self, side):
         # Get front wheel parameters. Return a tuple containing the steering
@@ -447,20 +438,34 @@ class _AckermannCtrlr(object):
     _DEF_EQ_POS = 0.0       # Default equilibrium position. Unit: meter.
     _DEF_CMD_TIMEOUT = 0.5  # Default command timeout. Unit: second.
     _DEF_PUB_FREQ = 30.0    # Default publishing frequency. Unit: hertz.
-
-    _SHOCK_CMD_PERIOD = 1.0 # Shock absorber command period. Unit: second.
 # end _AckermannCtrlr
 
 
-def _create_axle_cmd_pub(axle_ctrlr_name):
+def _wait_for_ctrlr(list_ctrlrs, ctrlr_name):
+    # Wait for the specified controller to be in the "running" state.
+    # Commands can be lost if they are published before their controller is
+    # running, even if a latched publisher is used.
+
+    while True:
+        response = list_ctrlrs()
+        for ctrlr in response.controller:
+            if ctrlr.name == ctrlr_name:
+                if ctrlr.state == "running":
+                    return
+                rospy.sleep(0.1)
+                break
+
+
+def _create_axle_cmd_pub(list_ctrlrs, axle_ctrlr_name):
     # Create an axle command publisher.
     if not axle_ctrlr_name:
         return None
-    return _create_cmd_pub(axle_ctrlr_name)
+    return _create_cmd_pub(list_ctrlrs, axle_ctrlr_name)
 
 
-def _create_cmd_pub(ctrlr_name):
+def _create_cmd_pub(list_ctrlrs, ctrlr_name):
     # Create a command publisher.
+    _wait_for_ctrlr(list_ctrlrs, ctrlr_name)
     return rospy.Publisher(ctrlr_name + "/command", Float64)
 
 
