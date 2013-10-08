@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>ackermann_vehicle_gazebo</name>
-  <version>1.0.0</version>
+  <version>0.1.0</version>
   <description>
     ackermann_vehicle_gazebo is used with Gazebo for simulating a vehicle with
     Ackermann steering.
@@ -21,13 +21,14 @@
     limitations under the License.
   </description>
   <maintainer email="jim.rothrock@wunderkammerlab.com">
-    Jim Rothrock, Wunderkammer Laboratory
+    Jim Rothrock
   </maintainer>
   <license>Apache 2.0</license>
 
-  <author email="jim.rothrock@wunderkammerlab.com">
-    Jim Rothrock, Wunderkammer Laboratory
-  </author>
+  <url type="website">http://wiki.ros.org/ackermann_vehicle_gazebo</url>
+  <url type="bugtracker">https://github.com/wunderkammer-laboratory/ackermann_vehicle/issues</url>
+  <url type="repository">https://github.com/wunderkammer-laboratory/ackermann_vehicle.git</url>
+  <author email="jim.rothrock@wunderkammerlab.com">Jim Rothrock</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
