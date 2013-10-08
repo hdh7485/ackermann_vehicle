@@ -78,6 +78,8 @@ Parameters:
         Joint command publishing frequency. It must be greater than zero.
         Unit: hertz.
 
+This node uses a transform listener.
+
 Copyright (c) 2013 Wunderkammer Laboratory
 
 Licensed under the Apache License, Version 2.0 (the "License");
