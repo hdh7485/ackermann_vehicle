@@ -226,11 +226,7 @@ class _AckermannCtrlr(object):
         self._inv_wheelbase = 1 / self._wheelbase  # Inverse of _wheelbase
         self._wheelbase_sqr = self._wheelbase ** 2
 
-        # Subscribers and publishers
-
-        self._ackermann_cmd_sub = \
-            rospy.Subscriber("ackermann_cmd", AckermannDriveStamped,
-                             self.ackermann_cmd_cb, queue_size=1)
+        # Publishers and subscribers
 
         self._left_steer_cmd_pub = \
             _create_cmd_pub(list_ctrlrs, left_steer_ctrlr_name)
@@ -245,6 +241,10 @@ class _AckermannCtrlr(object):
             _create_axle_cmd_pub(list_ctrlrs, left_rear_axle_ctrlr_name)
         self._right_rear_axle_cmd_pub = \
             _create_axle_cmd_pub(list_ctrlrs, right_rear_axle_ctrlr_name)
+
+        self._ackermann_cmd_sub = \
+            rospy.Subscriber("ackermann_cmd", AckermannDriveStamped,
+                             self.ackermann_cmd_cb, queue_size=1)
 
     def spin(self):
         """Control the vehicle."""
