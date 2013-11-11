@@ -3,7 +3,7 @@
   <name>ackermann_vehicle_gazebo</name>
   <version>0.1.0</version>
   <description>
-    ackermann_vehicle_gazebo is used with Gazebo for simulating a vehicle with
+    ackermann_vehicle_gazebo is used with Gazebo to simulate a vehicle with
     Ackermann steering.
   </description>
   <!--
@@ -46,5 +46,6 @@
 
   <export>
     <architecture_independent/>
+    <rosdoc config="rosdoc.yaml"/>
   </export>
 </package>
