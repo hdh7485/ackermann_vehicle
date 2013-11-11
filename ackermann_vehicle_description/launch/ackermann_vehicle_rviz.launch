@@ -4,6 +4,10 @@
 
 Use RViz to visualize a vehicle with Ackermann steering.
 
+Arguments:
+    namespace (string, default: ackermann_vehicle)
+        Vehicle namespace.
+
 Copyright (c) 2013 Wunderkammer Laboratory
 
 Licensed under the Apache License, Version 2.0 (the "License");

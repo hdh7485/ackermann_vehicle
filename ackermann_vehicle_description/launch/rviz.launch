@@ -4,6 +4,10 @@
 
 Launch RViz in the "ackermann_vehicle" namespace.
 
+Arguments:
+    namespace (string, default: ackermann_vehicle)
+        Vehicle namespace.
+
 Copyright (c) 2013 Wunderkammer Laboratory
 
 Licensed under the Apache License, Version 2.0 (the "License");
