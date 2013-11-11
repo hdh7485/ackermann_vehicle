@@ -23,8 +23,13 @@ Published Topics:
     <right rear axle controller name>/command (std_msgs/Float64)
         Command for the right rear axle controller.
     <shock absorber controller name>/command (std_msgs/Float64)
-        One of these topics exists for each shock absorber. These are latched
+        One of these topics exists for each shock absorber. They are latched
         topics.
+
+Services Called:
+    controller_manager/list_controllers (controller_manager_msgs/
+                                         ListControllers)
+        List the states of the controllers.
 
 Parameters:
     ~left_front_wheel/steering_link_name (string, default: left_steering_link)
@@ -43,7 +48,7 @@ Parameters:
 
     ~left_rear_wheel/link_name (string, default: left_wheel)
     ~right_rear_wheel/link_name (string, default: right_wheel)
-        Name of links that have origins coincident with the centers of the
+        Names of links that have origins coincident with the centers of the
         left and right wheels, respectively. The rear wheel links are used to
         compute the vehicle's wheelbase.
 
@@ -61,24 +66,35 @@ Parameters:
     ~right_rear_wheel/diameter
         Wheel diameters. Each diameter must be greater than zero. Unit: meter.
 
-    ~shock_absorbers (list, default: empty)
-        controller_name (string)
-            Shock absorber controller name.
-        equilibrium_position (float, default: 0.0)
-            The shock absorber's equilibrium position.
+    ~shock_absorbers (sequence of mappings, default: empty)
+        Zero or more shock absorbers.
 
-        Zero or more shock absorbers may be specified.
+        Key-Value Pairs:
+
+        controller_name (string)
+            Controller name.
+        equilibrium_position (float, default: 0.0)
+            Equilibrium position. Unit: meter.
 
     ~cmd_timeout (float, default: 0.5)
-        If cmd_timeout is greater than zero and this node does not receive a
-        command for more than cmd_timeout seconds, vehicle motion is paused
-        until a command is received. If cmd_timeout is less than or equal to
+        If ~cmd_timeout is greater than zero and this node does not receive a
+        command for more than ~cmd_timeout seconds, vehicle motion is paused
+        until a command is received. If ~cmd_timeout is less than or equal to
         zero, the command timeout is disabled.
     ~publishing_frequency (float, default: 30.0)
         Joint command publishing frequency. It must be greater than zero.
         Unit: hertz.
 
-This node uses a transform listener.
+Required tf Transforms:
+    <~left_front_wheel/steering_link_name> to <~right_rear_wheel/link_name>
+        Specifies the position of the left front wheel's steering link in the
+        right rear wheel's frame.
+    <~right_front_wheel/steering_link_name> to <~right_rear_wheel/link_name>
+        Specifies the position of the right front wheel's steering link in the
+        right rear wheel's frame.
+    <~left_rear_wheel/link_name> to <~right_rear_wheel/link_name>
+        Specifies the position of the left rear wheel in the right rear
+        wheel's frame.
 
 Copyright (c) 2013 Wunderkammer Laboratory
 
@@ -297,7 +313,7 @@ class _AckermannCtrlr(object):
         """Ackermann driving command callback
 
         :Parameters:
-          ackermann_cmd: ackermann_msgs.msg.AckermannDriveStamped
+          ackermann_cmd : ackermann_msgs.msg.AckermannDriveStamped
             Ackermann driving command.
         """
         self._last_cmd_time = rospy.get_time()
