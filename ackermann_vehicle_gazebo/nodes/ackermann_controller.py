@@ -210,13 +210,12 @@ class _AckermannCtrlr(object):
         self._last_cmd_time = rospy.get_time()
 
         # _ackermann_cmd_lock is used to control access to _steer_ang,
-        # _steer_ang_vel, _speed, _accel, and _jerk.
+        # _steer_ang_vel, _speed, and _accel.
         self._ackermann_cmd_lock = threading.Lock()
         self._steer_ang = 0.0      # Steering angle
         self._steer_ang_vel = 0.0  # Steering angle velocity
         self._speed = 0.0
         self._accel = 0.0          # Acceleration
-        self._jerk = 0.0
 
         self._last_steer_ang = 0.0  # Last steering angle
         self._theta_left = 0.0      # Left steering joint angle
@@ -280,19 +279,17 @@ class _AckermannCtrlr(object):
                 # vehicle.
                 steer_ang_changed, center_y = \
                     self._ctrl_steering(self._last_steer_ang, 0.0, 0.001)
-                self._ctrl_axles(0.0, 0.0, 0.0, 0.001, steer_ang_changed,
-                                 center_y)
+                self._ctrl_axles(0.0, 0.0, 0.0, steer_ang_changed, center_y)
             elif delta_t > 0.0:
                 with self._ackermann_cmd_lock:
                     steer_ang = self._steer_ang
                     steer_ang_vel = self._steer_ang_vel
                     speed = self._speed
                     accel = self._accel
-                    jerk = self._jerk
                 steer_ang_changed, center_y = \
                     self._ctrl_steering(steer_ang, steer_ang_vel, delta_t)
-                self._ctrl_axles(speed, accel, jerk, delta_t,
-                                 steer_ang_changed, center_y)
+                self._ctrl_axles(speed, accel, delta_t, steer_ang_changed,
+                                 center_y)
 
             # Publish the steering and axle joint commands.
             self._left_steer_cmd_pub.publish(self._theta_left)
@@ -322,7 +319,6 @@ class _AckermannCtrlr(object):
             self._steer_ang_vel = ackermann_cmd.drive.steering_angle_velocity
             self._speed = ackermann_cmd.drive.speed
             self._accel = ackermann_cmd.drive.acceleration
-            self._jerk = ackermann_cmd.drive.jerk
 
     def _get_front_wheel_params(self, side):
         # Get front wheel parameters. Return a tuple containing the steering
@@ -407,27 +403,16 @@ class _AckermannCtrlr(object):
 
         return steer_ang_changed, center_y
 
-    def _ctrl_axles(self, speed, accel_limit, jerk_limit, delta_t,
-                    steer_ang_changed, center_y):
+    def _ctrl_axles(self, speed, accel_limit, delta_t, steer_ang_changed,
+                    center_y):
         # Control the axle joints.
 
         # Compute veh_speed, the vehicle's desired speed.
         if accel_limit > 0.0:
             # Limit the vehicle's acceleration.
-
-            if jerk_limit > 0.0:
-                if self._last_accel_limit > 0.0:
-                    jerk = (accel_limit - self._last_accel_limit) / delta_t
-                    jerk = max(-jerk_limit, min(jerk, jerk_limit))
-                    accel_limit_2 = self._last_accel_limit + jerk * delta_t
-                else:
-                    accel_limit_2 = accel_limit
-            else:
-                accel_limit_2 = accel_limit
-            self._last_accel_limit = accel_limit_2
-
+            self._last_accel_limit = accel_limit
             accel = (speed - self._last_speed) / delta_t
-            accel = max(-accel_limit_2, min(accel, accel_limit_2))
+            accel = max(-accel_limit, min(accel, accel_limit))
             veh_speed = self._last_speed + accel * delta_t
         else:
             self._last_accel_limit = accel_limit
