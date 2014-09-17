@@ -21,7 +21,7 @@ LLC. Mabuchi Motor(R) is a registered trademark of Mabuchi Motor Co., Ltd.
 Corporation Japan. All other trademarks and service marks are the property of
 their respective owners.
 
-Copyright (c) 2011-2013 Wunderkammer Laboratory
+Copyright (c) 2011-2014 Wunderkammer Laboratory
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -111,9 +111,6 @@ limitations under the License.
        measured in rad/s. -->
   <xacro:property name="servo_stall_torque" value="0.5649"/>
   <xacro:property name="servo_no_load_speed" value="4.553"/>
-
-  <!-- ctrl_period is gazebo_ros_control's control period. Unit: hertz. -->
-  <xacro:property name="ctrl_period" value="0.01"/>
 
   <material name="battery_mat">
     <color rgba="0 0 1 1"/>
@@ -398,12 +395,6 @@ limitations under the License.
                     lr_reflect="-1" fr_reflect="-1"/>
 
   <gazebo>
-    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <!-- As of 10/7/13, setting controlPeriod to a value greater than
-           Gazebo's simulation period prevents the shock absorbers from
-           working.
-      <controlPeriod>${ctrl_period}</controlPeriod>
-      -->
-    </plugin>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"/>
   </gazebo>
 </robot>
