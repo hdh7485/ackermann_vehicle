@@ -96,7 +96,7 @@ Required tf Transforms:
         Specifies the position of the left rear wheel in the right rear
         wheel's frame.
 
-Copyright (c) 2013 Wunderkammer Laboratory
+Copyright (c) 2013-2014 Wunderkammer Laboratory
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -373,7 +373,7 @@ class _AckermannCtrlr(object):
         while True:
             try:
                 trans, not_used = \
-                    tfl.lookupTransform(self._right_rear_link_name, link, 
+                    tfl.lookupTransform(self._right_rear_link_name, link,
                                         rospy.Time(0))
                 return numpy.array(trans)
             except:
