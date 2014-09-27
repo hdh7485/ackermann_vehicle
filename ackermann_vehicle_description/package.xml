@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>ackermann_vehicle_description</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>
     ackermann_vehicle_description contains the description (3D model,
     kinematics, mass, etc.) of a vehicle with Ackermann steering.
