@@ -60,7 +60,7 @@ Parameters:
         that axle will not have a controller. This allows the control of
         front-wheel, rear-wheel, and four-wheel drive vehicles.
 
-    ~left_front_wheel/diameter (float, default: 1.0)
+    ~left_front_wheel/diameter (double, default: 1.0)
     ~right_front_wheel/diameter
     ~left_rear_wheel/diameter
     ~right_rear_wheel/diameter
@@ -73,15 +73,15 @@ Parameters:
 
         controller_name (string)
             Controller name.
-        equilibrium_position (float, default: 0.0)
+        equilibrium_position (double, default: 0.0)
             Equilibrium position. Unit: meter.
 
-    ~cmd_timeout (float, default: 0.5)
+    ~cmd_timeout (double, default: 0.5)
         If ~cmd_timeout is greater than zero and this node does not receive a
         command for more than ~cmd_timeout seconds, vehicle motion is paused
         until a command is received. If ~cmd_timeout is less than or equal to
         zero, the command timeout is disabled.
-    ~publishing_frequency (float, default: 30.0)
+    ~publishing_frequency (double, default: 30.0)
         Joint command publishing frequency. It must be greater than zero.
         Unit: hertz.
 
@@ -96,7 +96,7 @@ Required tf Transforms:
         Specifies the position of the left rear wheel in the right rear
         wheel's frame.
 
-Copyright (c) 2013-2014 Wunderkammer Laboratory
+Copyright (c) 2013-2015 Wunderkammer Laboratory
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
