@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""ackermann_controller.py
+"""ackermann_controller
 
 Control the wheels of a vehicle with Ackermann steering.
 
