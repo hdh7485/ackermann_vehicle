@@ -10,7 +10,7 @@ Arguments:
     world_name (string, default: worlds/empty.world)
         Gazebo world name.
     cmd_timeout (float, default: 0.5)
-        Command timeout passed to the ackermann_controller.py node.
+        Command timeout passed to the ackermann_controller node.
     x (float, default: 0.0)
     y (float, default: 0.0)
     z (float, default: 0.1)
@@ -20,7 +20,7 @@ Arguments:
         Vehicle pose. x, y, and z are measured in meters. roll, pitch, and yaw
         are measured in radians.
 
-Copyright (c) 2013 Wunderkammer Laboratory
+Copyright (c) 2013-2015 Wunderkammer Laboratory
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ limitations under the License.
 
     <!-- Control the steering, axle, and shock absorber joints. -->
     <node name="ackermann_controller" pkg="ackermann_vehicle_gazebo"
-          type="ackermann_controller.py">
+          type="ackermann_controller">
       <param name="cmd_timeout" value="$(arg cmd_timeout)"/>
       <rosparam file="$(find ackermann_vehicle_gazebo)/config/em_3905_ackermann_ctrlr_params.yaml" command="load"/>
     </node>
