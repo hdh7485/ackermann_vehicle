@@ -9,14 +9,14 @@ Arguments:
         Vehicle namespace.
     world_name (string, default: worlds/empty.world)
         Gazebo world name.
-    cmd_timeout (float, default: 0.5)
+    cmd_timeout (double, default: 0.5)
         Command timeout passed to the ackermann_controller node.
-    x (float, default: 0.0)
-    y (float, default: 0.0)
-    z (float, default: 0.1)
-    roll (float, default: 0.0)
-    pitch (float, default: 0.0)
-    yaw (float, default: 0.0)
+    x (double, default: 0.0)
+    y (double, default: 0.0)
+    z (double, default: 0.1)
+    roll (double, default: 0.0)
+    pitch (double, default: 0.0)
+    yaw (double, default: 0.0)
         Vehicle pose. x, y, and z are measured in meters. roll, pitch, and yaw
         are measured in radians.
 
