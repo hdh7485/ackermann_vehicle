@@ -2,6 +2,11 @@
 Changelog for package ackermann_vehicle_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.3 (2015-09-18)
+------------------
+* Added some run_depend elements.
+* Added a copyright comment.
+
 0.1.2 (2015-08-19)
 ------------------
 * Launch and URDF files are now installed.
