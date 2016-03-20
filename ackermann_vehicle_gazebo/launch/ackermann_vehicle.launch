@@ -36,7 +36,7 @@ limitations under the License.
 -->
 
 <launch>
-  <arg name="namespace" default="ackermann_vehicle"/>
+  <arg name="namespace" default="/"/>
   <arg name="world_name" default="worlds/empty.world"/>
   <arg name="cmd_timeout" default="0.5"/>
 

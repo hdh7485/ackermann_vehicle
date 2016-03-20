@@ -5,7 +5,7 @@
 Control the wheels of a vehicle with Ackermann steering.
 
 Subscribed Topics:
-    ackermann_cmd (ackermann_msgs/AckermannDriveStamped)
+    ackermann_cmd (ackermann_msgs/AckermannDrive)
         Ackermann command. It contains the vehicle's desired speed and steering
         angle.
 
@@ -120,7 +120,7 @@ from math import pi
 import rospy
 import tf
 
-from ackermann_msgs.msg import AckermannDriveStamped
+from ackermann_msgs.msg import AckermannDrive
 from std_msgs.msg import Float64
 from controller_manager_msgs.srv import ListControllers
 
@@ -142,16 +142,19 @@ class _AckermannCtrlr(object):
         # Wheels
         (left_steer_link_name, left_steer_ctrlr_name,
          left_front_axle_ctrlr_name, self._left_front_inv_circ) = \
-         self._get_front_wheel_params("left")
+                self._get_front_wheel_params("left")
+
         (right_steer_link_name, right_steer_ctrlr_name,
          right_front_axle_ctrlr_name, self._right_front_inv_circ) = \
-         self._get_front_wheel_params("right")
+                self._get_front_wheel_params("right")
+
         (left_rear_link_name, left_rear_axle_ctrlr_name,
          self._left_rear_inv_circ) = \
-         self._get_rear_wheel_params("left")
+                self._get_rear_wheel_params("left")
+
         (self._right_rear_link_name, right_rear_axle_ctrlr_name,
          self._right_rear_inv_circ) = \
-         self._get_rear_wheel_params("right")
+                self._get_rear_wheel_params("right")
 
         list_ctrlrs = rospy.ServiceProxy("controller_manager/list_controllers",
                                          ListControllers)
@@ -260,7 +263,7 @@ class _AckermannCtrlr(object):
             _create_axle_cmd_pub(list_ctrlrs, right_rear_axle_ctrlr_name)
 
         self._ackermann_cmd_sub = \
-            rospy.Subscriber("ackermann_cmd", AckermannDriveStamped,
+            rospy.Subscriber("ackermann_cmd", AckermannDrive,
                              self.ackermann_cmd_cb, queue_size=1)
 
     def spin(self):
@@ -310,15 +313,15 @@ class _AckermannCtrlr(object):
         """Ackermann driving command callback
 
         :Parameters:
-          ackermann_cmd : ackermann_msgs.msg.AckermannDriveStamped
+          ackermann_cmd : ackermann_msgs.msg.AckermannDrive
             Ackermann driving command.
         """
         self._last_cmd_time = rospy.get_time()
         with self._ackermann_cmd_lock:
-            self._steer_ang = ackermann_cmd.drive.steering_angle
-            self._steer_ang_vel = ackermann_cmd.drive.steering_angle_velocity
-            self._speed = ackermann_cmd.drive.speed
-            self._accel = ackermann_cmd.drive.acceleration
+            self._steer_ang = ackermann_cmd.steering_angle
+            self._steer_ang_vel = ackermann_cmd.steering_angle_velocity
+            self._speed = ackermann_cmd.speed
+            self._accel = ackermann_cmd.acceleration
 
     def _get_front_wheel_params(self, side):
         # Get front wheel parameters. Return a tuple containing the steering
