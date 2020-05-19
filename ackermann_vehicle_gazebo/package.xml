@@ -44,6 +44,8 @@
   <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>tf</run_depend>
+  <run_depend>joy</run_depend>
+  <run_depend>teleop_twist_joy</run_depend>
 
   <export>
     <architecture_independent/>
