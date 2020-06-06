@@ -35,6 +35,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <run_depend>gazebo_ros_control</run_depend>
+  <run_depend>hector_models</run_depend>
   <run_depend>hardware_interface</run_depend>
   <run_depend>joint_state_publisher</run_depend>
   <run_depend>robot_state_publisher</run_depend>
