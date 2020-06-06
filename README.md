@@ -1,9 +1,9 @@
-ackermann_vehicle
+#ackermann_vehicle
 =================
 
 ROS packages for simulating a vehicle with Ackermann steering
 
-# Installation
+## Installation
 ```
 cd ~/catkin_ws/src
 git clone https://github.com/hdh7485/ackermann_vehicle.git
@@ -12,5 +12,5 @@ cd ~/catkin_ws
 catkin_make
 ```
 
-# Launching
+## Running
 `roslaunch ackermann_vehicle_gazebo ackermann_vehicle.launch`
