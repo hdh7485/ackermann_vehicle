@@ -12,5 +12,5 @@ cd ~/catkin_ws
 catkin_make
 ```
 
-## Launching
+## Running
 `roslaunch ackermann_vehicle_gazebo ackermann_vehicle.launch`
