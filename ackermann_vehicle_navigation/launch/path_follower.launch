@@ -1,0 +1,13 @@
+<launch>
+  <node pkg="ackermann_vehicle_navigation" type="path_publisher.py" name="path_publisher" output="screen">
+    <param name="tracking_path_directory" value="$(find ackermann_vehicle_navigation)/path/test_path.txt" />
+    <param name="global_frame_id" value="world" />
+  </node>
+  <node pkg="ackermann_vehicle_navigation" type="tf_publisher.py" name="tf_publisher" output="screen">
+    <param name="vehicle_name" value="ackermann_vehicle" />
+    <param name="global_frame_id" value="world" />
+  </node>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_broadcaster" args="0 0 0 0 0 0 1 ackermann_vehicle base_link" />
+  <!-- <node pkg="ackermann_vehicle_navigation" type="path_follower.py" name="path_follower">
+  </node> -->
+</launch>
