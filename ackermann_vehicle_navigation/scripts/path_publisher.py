@@ -10,8 +10,8 @@ import rospkg
 rospack = rospkg.RosPack()
 
 def talker():
-    pub = rospy.Publisher('/path', Path, queue_size=10)
     rospy.init_node('path_publisher', anonymous=True)
+    pub = rospy.Publisher('/path', Path, queue_size=10)
 
     package_path = rospack.get_path('ackermann_vehicle_navigation')
     test_directory = package_path + "/path/test_path.txt"
