@@ -11,7 +11,7 @@ rospack = rospkg.RosPack()
 
 def talker():
     rospy.init_node('path_publisher', anonymous=True)
-    pub = rospy.Publisher('/path', Path, queue_size=10)
+    pub = rospy.Publisher('/path', Path, queue_size=1)
 
     package_path = rospack.get_path('ackermann_vehicle_navigation')
     test_directory = package_path + "/path/test_path.txt"
@@ -21,7 +21,7 @@ def talker():
     f = open(path_directory, 'r')
 
     rospy.loginfo(path_directory)
-    rate = rospy.Rate(10) # 10hz
+    rate = rospy.Rate(1) # 10hz
     
     lines = f.readlines()
     f.close()

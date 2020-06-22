@@ -9,7 +9,6 @@ project(ackermann_vehicle_navigation)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   ackermann_msgs
-  navigation
   roscpp
   rospy
   std_msgs
@@ -107,7 +106,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES ackermann_vehicle_navigation
-#  CATKIN_DEPENDS ackermann_msgs navigation roscpp rospy std_msgs
+#  CATKIN_DEPENDS ackermann_msgs roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 

@@ -471,7 +471,7 @@ limitations under the License.
         </ray>
         <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
           <topicName>/ackermann_vehicle/scan</topicName>
-          <frameName>hokuyo_link</frameName>
+          <frameName>hokuyo_laser_frame</frameName>
         </plugin>
       </sensor>
     </gazebo>

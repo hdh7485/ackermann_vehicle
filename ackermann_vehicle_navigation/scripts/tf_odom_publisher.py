@@ -39,7 +39,7 @@ if __name__ == '__main__':
     rospy.init_node('tf_odom_publisher')
     vehicle_name = rospy.get_param('~vehicle_name', 'ackermann_vehicle')
     global_frame_id = rospy.get_param('~global_frame_id', 'world')
-    odom_publisher = rospy.Publisher('/odom', Odometry, queue_size=10)
+    odom_publisher = rospy.Publisher('/odom', Odometry, queue_size=1)
     rospy.Subscriber('/gazebo/model_states',
                      ModelStates,
                      handle_vehicle_pose,

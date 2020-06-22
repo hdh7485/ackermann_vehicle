@@ -1,0 +1,9 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/usrg-dhhan/ugv_ws/devel/lib/python2.7/dist-packages",
+        "/home/usrg-dhhan/catkin_ws/devel/lib/python2.7/dist-packages",
+        "/opt/ros/melodic/lib/python2.7/dist-packages",
+        "/home/usrg-dhhan/models/research/",
+        "/home/usrg-dhhan/models/research/slim"
+    ]
+}
