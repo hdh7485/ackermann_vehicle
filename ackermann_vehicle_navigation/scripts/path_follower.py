@@ -33,16 +33,18 @@ def odom_callback(odom_msg):
             # nearest_index = i
 
     current_point = np.array([odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y])
-    next_wp = np.array([subscribed_path.poses[wp_index+1].pose.position.x, subscribed_path.poses[wp_index+1].pose.position.y])
+    next_wp = np.array([subscribed_path.poses[wp_index].pose.position.x, subscribed_path.poses[wp_index].pose.position.y])
     next_point_distance = np.linalg.norm(next_wp - current_point)
-    if next_point_distance < 0.2:
+    if next_point_distance < 0.4:
         wp_index = wp_index+1
 
     # rospy.loginfo(nearest_index)
     # nearest_front_point = np.array([subscribed_path.poses[nearest_index+1].pose.position.x, subscribed_path.poses[nearest_index+1].pose.position.y])
     # nearest_rear_point = np.array([subscribed_path.poses[nearest_index].pose.position.x, subscribed_path.poses[nearest_index].pose.position.y])
-    current_wp = np.array([subscribed_path.poses[wp_index].pose.position.x, subscribed_path.poses[wp_index].pose.position.y])
-    next_wp = np.array([subscribed_path.poses[wp_index+1].pose.position.x, subscribed_path.poses[wp_index+1].pose.position.y])
+    # current_wp = np.array([subscribed_path.poses[wp_index].pose.position.x, subscribed_path.poses[wp_index].pose.position.y])
+    # next_wp = np.array([subscribed_path.poses[wp_index+1].pose.position.x, subscribed_path.poses[wp_index+1].pose.position.y])
+    current_wp = np.array([subscribed_path.poses[wp_index-1].pose.position.x, subscribed_path.poses[wp_index-1].pose.position.y])
+    next_wp = np.array([subscribed_path.poses[wp_index].pose.position.x, subscribed_path.poses[wp_index].pose.position.y])
     
     ba = current_point - next_wp
     bc = current_wp - next_wp
@@ -65,9 +67,10 @@ def odom_callback(odom_msg):
     pre_tiem = current_time
     
     # yaw_rate = beta*0.6 + beta_dot*3.5 + cte*0.002 + cte_dot*0.05
-    yaw_rate = beta*1.0 + cte*1.00 + beta_dot*1.0 + cte_dot*0.05
-    vx = 0.2
-    rospy.loginfo("wp_index:{} beta:{} cte:{} yaw_rate:{} vx:{}".format(wp_index, np.degrees(beta), cte, yaw_rate, vx))
+    # yaw_rate = beta*1.0 + cte*1.00 + beta_dot*1.0 + cte_dot*0.05
+    yaw_rate = beta*0.7 + cte*0.5
+    vx = 0.15
+    rospy.loginfo("wp_index:{} beta:{} cte:{} yaw_rate:{} vx:{}".format(subscribed_path.poses[wp_index-1], np.degrees(beta), cte, yaw_rate, vx))
     pre_beta = beta
     pre_cte = cte
     cmd_vel_msg = Twist()

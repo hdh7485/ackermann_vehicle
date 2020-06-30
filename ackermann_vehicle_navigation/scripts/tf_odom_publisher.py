@@ -17,7 +17,7 @@ def handle_vehicle_pose(msg, vehicle_name):
     t.header.frame_id = global_frame_id
     t.child_frame_id = vehicle_name
     #odom_msg.pose.pose = msg.pose[vehicle_index]
-    t.transform.translation.x = msg.pose[vehicle_index].position.x
+    t.transform.translation.x = msg.pose[vehicle_index].position.x + 1
     t.transform.translation.y = msg.pose[vehicle_index].position.y
     t.transform.translation.z = 0.0
     t.transform.rotation = msg.pose[vehicle_index].orientation
@@ -28,7 +28,7 @@ def handle_vehicle_pose(msg, vehicle_name):
     odom_msg.header.frame_id = global_frame_id
     odom_msg.child_frame_id = vehicle_name
     #odom_msg.pose.pose = msg.pose[vehicle_index]
-    odom_msg.pose.pose.position.x = msg.pose[vehicle_index].position.x
+    odom_msg.pose.pose.position.x = msg.pose[vehicle_index].position.x + 1
     odom_msg.pose.pose.position.y = msg.pose[vehicle_index].position.y
     odom_msg.pose.pose.position.z = 0
     odom_msg.pose.pose.orientation = msg.pose[vehicle_index].orientation

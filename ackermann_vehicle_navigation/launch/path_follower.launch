@@ -1,10 +1,14 @@
 <launch>
   <node pkg="ackermann_vehicle_navigation" type="cmd_vel_to_ackermann_drive.py" name="cmd_vel_to_ackermann" output="screen">
   </node>
-  <node pkg="ackermann_vehicle_navigation" type="path_publisher.py" name="path_publisher" output="screen">
-    <param name="tracking_path_directory" value="$(find ackermann_vehicle_navigation)/path/test_path.txt" />
+  <node pkg="ackermann_vehicle_navigation" type="path_publisher_npz.py" name="path_publisher" output="screen">
+    <param name="tracking_path_directory" value="$(find ackermann_vehicle_navigation)/path/Neural_rrt_1.npz" />
     <param name="global_frame_id" value="world" />
   </node>
+  <!-- <node pkg="ackermann_vehicle_navigation" type="path_publisher.py" name="path_publisher" output="screen">
+    <param name="tracking_path_directory" value="$(find ackermann_vehicle_navigation)/path/test_path.txt" />
+    <param name="global_frame_id" value="world" />
+  </node> -->
   <node pkg="ackermann_vehicle_navigation" type="tf_odom_publisher.py" name="tf_publisher" output="screen">
     <param name="vehicle_name" value="ackermann_vehicle" />
     <param name="global_frame_id" value="world" />

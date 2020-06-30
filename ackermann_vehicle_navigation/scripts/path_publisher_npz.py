@@ -6,6 +6,7 @@ from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Pose
 import tf
 import rospkg
+import numpy as np
 
 rospack = rospkg.RosPack()
 
@@ -14,17 +15,18 @@ def talker():
     pub = rospy.Publisher('/path', Path, queue_size=1)
 
     package_path = rospack.get_path('ackermann_vehicle_navigation')
-    test_directory = package_path + "/path/test_path.txt"
+    test_directory = package_path + "/path/test_path.npz"
+    
     path_directory = rospy.get_param('~tracking_path_directory', test_directory)
     global_frame_id = rospy.get_param('~global_frame_id', 'world')
 
-    f = open(path_directory, 'r')
+    # f = open(path_directory, 'r')
+    # lines = f.readlines()
+    # f.close()
 
     rospy.loginfo(path_directory)
     rate = rospy.Rate(1) # 1hz
     
-    lines = f.readlines()
-    f.close()
     posestamp_list = []
     seq = 0
 
@@ -33,14 +35,15 @@ def talker():
     header_msg.stamp = rospy.Time.now()
     header_msg.frame_id = global_frame_id
 
-    for line in lines:
+    loaded_path = np.load(path_directory).get('path')
+
+    for point in loaded_path:
         path_msg = Path()
         posestamp_msg = PoseStamped()
         pose_msg = Pose()
-        value = line.split()
         # rospy.loginfo(value)
-        pose_msg.position.x = float(value[0])
-        pose_msg.position.y = float(value[1])
+        pose_msg.position.x = -point[1]
+        pose_msg.position.y = point[0]
         pose_msg.position.z = 0
         # pose_msg.orientation.x = 0
         # pose_msg.orientation.y = 0
