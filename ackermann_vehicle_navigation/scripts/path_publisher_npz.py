@@ -20,10 +20,6 @@ def talker():
     path_directory = rospy.get_param('~tracking_path_directory', test_directory)
     global_frame_id = rospy.get_param('~global_frame_id', 'world')
 
-    # f = open(path_directory, 'r')
-    # lines = f.readlines()
-    # f.close()
-
     rospy.loginfo(path_directory)
     rate = rospy.Rate(1) # 1hz
     
@@ -41,18 +37,12 @@ def talker():
         path_msg = Path()
         posestamp_msg = PoseStamped()
         pose_msg = Pose()
-        # rospy.loginfo(value)
         pose_msg.position.x = -point[1]
         pose_msg.position.y = point[0]
         pose_msg.position.z = 0
-        # pose_msg.orientation.x = 0
-        # pose_msg.orientation.y = 0
-        # pose_msg.orientation.z = float(value[5])
-        # pose_msg.orientation.w = float(value[6])
         posestamp_msg.pose = pose_msg
         posestamp_msg.header = header_msg
         posestamp_list.append(posestamp_msg)
-    # rospy.loginfo(posestamp_list)
 
     while not rospy.is_shutdown():
         header_msg.seq = seq
