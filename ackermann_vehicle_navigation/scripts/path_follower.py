@@ -80,7 +80,7 @@ def odom_callback(odom_msg):
     
         # yaw_rate = beta*1.0 + cte*1.00 + beta_dot*1.0 + cte_dot*0.05
         yaw_rate = beta*0.7 + cte*0.5 + heading_error
-        vx = 0.4
+        vx = 0.6
         # rospy.loginfo("wp_index:{} heading_error:{} heading:{} wp_heading:{} beta:{} cte:{} yaw_rate:{} vx:{}".format(subscribed_path.poses[wp_index-1], heading_error, current_heading, wp_heading, np.degrees(beta), cte, yaw_rate, vx))
         pre_beta = beta
         pre_cte = cte
