@@ -2,7 +2,8 @@
   <node pkg="ackermann_vehicle_navigation" type="cmd_vel_to_ackermann_drive.py" name="cmd_vel_to_ackermann" output="screen">
   </node>
   <node pkg="ackermann_vehicle_navigation" type="path_publisher_npz.py" name="path_publisher" output="screen">
-    <param name="tracking_path_directory" value="$(find ackermann_vehicle_navigation)/path/Neural_rrt_1.npz" />
+    <!--param name="tracking_payh_directory" value="$(find ackermann_vehicle_navigation)/path/Neural_rrt_1.npz" /-->
+    <param name="tracking_path_directory" value="/home/usrg-dhhan/Downloads/final_path/Neural_rrt_star_5_map_vertical_revised.npz"/>
     <!-- <param name="tracking_path_directory" value="$(find ackermann_vehicle_navigation)/path/Neural_rrt_star_0.npz" /> -->
     <param name="global_frame_id" value="world" />
   </node>

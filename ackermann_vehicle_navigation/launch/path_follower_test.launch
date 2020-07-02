@@ -3,7 +3,10 @@
   </node>
   <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_broadcaster" args="0 0 0 0 0 0 1 ackermann_vehicle base_link" />
   <node pkg="ackermann_vehicle_navigation" type="path_follower_tester.py" name="path_follower" output="screen">
-    <param name="tracking_path_directory" value="$(find ackermann_vehicle_navigation)/path/Neural_rrt_1.npz" />
+    <!-- <param name="tracking_path_directory" value="$(find ackermann_vehicle_navigation)/path/Neural_rrt_1.npz" /> -->
+    <!--param name="tracking_path_directory" value="/home/usrg-dhhan/Downloads/final_path/*parking_map.npz" /-->
+    <!-- <param name="tracking_path_directory" value="/home/usrg-dhhan/Downloads/final_path/*map_e_shape.npz" /> -->
+    <param name="tracking_path_directory" value="/home/usrg-dhhan/Downloads/final_path/*revised.npz" />
     <param name="global_frame_id" value="world" />
     <param name="vehicle_name" value="ackermann_vehicle" />
   </node>

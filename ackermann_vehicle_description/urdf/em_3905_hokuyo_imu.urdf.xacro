@@ -451,7 +451,7 @@ limitations under the License.
     </gazebo>
   </xacro:macro>
 
-  <!-- <xacro:hokuyo_laser/> -->
+  <xacro:hokuyo_laser/>
 
 
   <!-- IMU frame -->

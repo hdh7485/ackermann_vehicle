@@ -3,6 +3,7 @@ import rospy
 import tf
 import tf2_ros
 import tf_conversions
+import rospkg
 
 from nav_msgs.msg import Path
 from nav_msgs.msg import Odometry
@@ -22,7 +23,7 @@ from gazebo_msgs.srv import SetModelState
 
 import math
 import numpy as np
-import rospkg
+import glob
 
 rospack = rospkg.RosPack()
 
@@ -43,7 +44,7 @@ vx_limit = True
 
 test_number = 0
 
-def path_reader():
+def path_reader(directory):
     global subscribed_path
     
     posestamp_list = []
@@ -54,7 +55,7 @@ def path_reader():
     header_msg.stamp = rospy.Time.now()
     header_msg.frame_id = global_frame_id
 
-    loaded_path = np.load(path_directory).get('path')
+    loaded_path = np.load(directory).get('path')
 
     for point in loaded_path:
         path_msg = Path()
@@ -134,9 +135,9 @@ def handle_vehicle_pose(msg, vehicle_name):
                 wp_index = wp_index+1
                 # rospy.loginfo("length:{} wp_index:{}".format(len(subscribed_path.poses), wp_index))
                 if wp_index >= len(subscribed_path.poses):
-                    end_time = rospy.Time.now()
-                    rospy.loginfo((end_time - start_time).to_sec())
                     test_number += 1
+                    vehicle_status = 'Arrived'
+                    wp_index = 1
 
             current_wp = np.array([subscribed_path.poses[wp_index-1].pose.position.x, subscribed_path.poses[wp_index-1].pose.position.y])
             next_wp = np.array([subscribed_path.poses[wp_index].pose.position.x, subscribed_path.poses[wp_index].pose.position.y]) 
@@ -187,7 +188,6 @@ def handle_vehicle_pose(msg, vehicle_name):
             seq = seq + 1
 
 if __name__ == '__main__':
-    # global test_number, wp_index
     rospy.init_node('path_follower', anonymous=True, disable_signals=True)
 
     package_path = rospack.get_path('ackermann_vehicle_navigation')
@@ -197,6 +197,7 @@ if __name__ == '__main__':
     global_frame_id = rospy.get_param('~global_frame_id', 'world')
     vehicle_name = rospy.get_param('~vehicle_name', 'ackermann_vehicle')
     model_xml = rospy.get_param('/robot_description')
+    log_file_path = rospy.get_param('~log_destination', package_path + '/log/{}_log.txt'.format(str(rospy.Time.now().to_sec())))
 
     path_pub = rospy.Publisher('/path', Path, queue_size=1)
     odom_publisher = rospy.Publisher('/odom', Odometry, queue_size=1)
@@ -207,21 +208,37 @@ if __name__ == '__main__':
                      vehicle_name,
                      queue_size=1)
 
+    
+    path_list = glob.glob(path_directory)
+    rospy.loginfo(path_list)
+    path_file = path_list[0]
+
     is_first_while = True
     pre_test_number = -1
+    rospy.loginfo(log_file_path)
     while not rospy.is_shutdown():
         if test_number != pre_test_number:
+            end_time = rospy.Time.now()
+            if not is_first_while:
+                elapsed_time = (end_time - start_time).to_sec()
+                rospy.loginfo("{}".format(elapsed_time))
+                f = open(log_file_path, 'a')
+                f.write("{}, {}\n".format(path_list[test_number], elapsed_time))
+                f.close()
+                is_first_while = False
             rospy.wait_for_service('gazebo/set_model_state')
-            init_pose = Pose(position=Point(-1,0,1.5), orientation=Quaternion(0,0,0,1))
+            init_pose = Pose(position=Point(-1,0,1.5), orientation=Quaternion(0, 0, 0.7071068, 0.7071068))
             model_init_state = ModelState(model_name='ackermann_vehicle', pose=init_pose,
                                           twist=Twist(), reference_frame="world")
             spawn_model_prox = rospy.ServiceProxy('gazebo/set_model_state', SetModelState)
             spawn_model_prox(model_init_state)
-            path_reader()
+            path_reader(path_list[test_number])
+            rospy.loginfo("{} {}".format(test_number, path_list[test_number]))
             pre_test_number = test_number
             is_first_while = False
             wp_index = 1
             vehicle_status = "Generated"
+            start_time = end_time
     try:
         rospy.spin()
     except rospy.ROSInterruptException:

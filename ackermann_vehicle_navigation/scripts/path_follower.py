@@ -83,6 +83,7 @@ def odom_callback(odom_msg):
     
         # yaw_rate = beta*1.0 + cte*1.00 + beta_dot*1.0 + cte_dot*0.05
         yaw_rate = beta*0.7 + cte*0.5 + heading_error*1.0
+        # yaw_rate = beta*0.8 + cte*0.6
         if yaw_rate_limit is True:
             yaw_rate = max(min(yaw_rate, 0.5), -0.5)
 
