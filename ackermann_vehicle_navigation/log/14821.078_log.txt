@@ -1,0 +1,3 @@
+/home/usrg-dhhan/Downloads/final_path/rrt_9_me652_parking_map.npz, 27.042
+/home/usrg-dhhan/Downloads/final_path/rrt_star_1_me652_parking_map.npz, 21.705
+/home/usrg-dhhan/Downloads/final_path/Neural_rrt_9_me652_parking_map.npz, 25.42

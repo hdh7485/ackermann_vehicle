@@ -24,6 +24,7 @@ from gazebo_msgs.srv import SetModelState
 import math
 import numpy as np
 import glob
+import csv
 
 rospack = rospkg.RosPack()
 
@@ -56,6 +57,8 @@ def path_reader(directory):
     header_msg.frame_id = global_frame_id
 
     loaded_path = np.load(directory).get('path')
+    # f = open(directory, 'r')
+    # loaded_path = csv.reader(f)
 
     for point in loaded_path:
         path_msg = Path()
@@ -64,9 +67,13 @@ def path_reader(directory):
         pose_msg.position.x = -point[1]
         pose_msg.position.y = point[0]
         pose_msg.position.z = 0
+        # pose_msg.position.x = -float(point[1])
+        # pose_msg.position.y = float(point[0])
+        # pose_msg.position.z = 0.0
         posestamp_msg.pose = pose_msg
         posestamp_msg.header = header_msg
         posestamp_list.append(posestamp_msg)
+    # f.close()
 
     header_msg.seq = seq
     header_msg.stamp = rospy.Time.now()
@@ -169,12 +176,13 @@ def handle_vehicle_pose(msg, vehicle_name):
             pre_tiem = current_time
     
             # yaw_rate = beta*1.0 + cte*1.00 + beta_dot*1.0 + cte_dot*0.05
-            yaw_rate = beta*0.7 + cte*0.5 + heading_error*1.0
+            # yaw_rate = beta*0.7 + cte*0.5 + heading_error*1.0
+            yaw_rate = beta*0.4 + cte*0.3 + heading_error*0.6
             if yaw_rate_limit is True:
                 yaw_rate = max(min(yaw_rate, 0.5), -0.5)
 
             # vx = 0.6
-            vx = 0.7 - abs(beta*0.7 + cte*0.7 + heading_error*0.7)
+            vx = 0.7 - abs(beta*0.8 + cte*0.8 + heading_error*0.8)
             if vx_limit is True:
                 vx = max(min(vx, 0.7), 0.1)
             # rospy.loginfo("wp_index:{} heading_error:{} heading:{} wp_heading:{} beta:{} cte:{} yaw_rate:{} vx:{}".format(subscribed_path.poses[wp_index-1], heading_error, current_heading, wp_heading, np.degrees(beta), cte, yaw_rate, vx))
@@ -215,7 +223,6 @@ if __name__ == '__main__':
 
     is_first_while = True
     pre_test_number = -1
-    rospy.loginfo(log_file_path)
     while not rospy.is_shutdown():
         if test_number != pre_test_number:
             end_time = rospy.Time.now()
@@ -223,7 +230,7 @@ if __name__ == '__main__':
                 elapsed_time = (end_time - start_time).to_sec()
                 rospy.loginfo("{}".format(elapsed_time))
                 f = open(log_file_path, 'a')
-                f.write("{}, {}\n".format(path_list[test_number], elapsed_time))
+                f.write("{}, {}\n".format(path_list[test_number-1], elapsed_time))
                 f.close()
                 is_first_while = False
             rospy.wait_for_service('gazebo/set_model_state')

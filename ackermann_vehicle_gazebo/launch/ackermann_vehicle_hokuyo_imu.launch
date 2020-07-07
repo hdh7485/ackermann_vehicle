@@ -38,9 +38,14 @@ limitations under the License.
 <launch>
   <arg name="namespace" default="/"/>
   <arg name="cmd_timeout" default="0.5"/>
-  <!--arg name="world_name" default="$(find ackermann_vehicle_gazebo)/worlds/parking_lot.world"/-->
-  <arg name="world_name" default="$(find ackermann_vehicle_gazebo)/worlds/parking_lot_vertical.world"/>
-  <!-- <arg name="world_name" default="$(find ackermann_vehicle_gazebo)/worlds/parking_lot_e_shape.world"/> -->
+  <!--arg name="world_name" default=
+                  "$(find ackermann_vehicle_gazebo)/worlds/parking_lot.world"/-->
+  <!-- <arg name="world_name" default=
+                "$(find ackermann_vehicle_gazebo)/worlds/parking_lot_vertical.world"/> -->
+  <!-- <arg name="world_name" default=
+                "$(find ackermann_vehicle_gazebo)/worlds/parking_lot_e_shape.world"/> -->
+  <arg name="world_name" default=
+                "$(find ackermann_vehicle_gazebo)/worlds/parking_lot.world"/>
 
   <!-- Vehicle pose -->
   <arg name="x" default="-1.0"/>
