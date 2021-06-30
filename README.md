@@ -16,6 +16,7 @@ cd ~/catkin_ws/src
 git clone https://github.com/aizzat/ackermann_vehicle/
 sudo apt install ros-noetic-ackermann-msgs
 cd ~/catkin_ws
+rosdep install --from-paths src --ignore-src -r -y
 catkin_make
 ```
 
