@@ -1,3 +1,9 @@
+# This package is updated from original source to simulate the motion of the Ackerman drive in Gazebo
+
+Since most of the previous repo used previous version of ROS, I faced compilation error in ROS Noetic version running Ubuntu 20.04. 
+Some of the launch file issues due to the newer ROS version affected the launch file. The issue can be seen here:
+https://answers.ros.org/question/122021/xacro-problem-invalid-param-tag-cannot-load-command-parameter-robot_description/
+
 ackermann_vehicle
 =================
 
