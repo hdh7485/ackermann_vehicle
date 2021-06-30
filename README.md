@@ -38,3 +38,5 @@ This python file will wait for /cmd_vel inputs. You can test it with another ter
 rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.2}}'
 ```
 
+![Test run steering terminal](images/testrunackermann.jpg)
+
