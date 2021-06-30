@@ -5,7 +5,7 @@ Some of the launch file issues due to the newer ROS version affected the launch 
 
 https://answers.ros.org/question/122021/xacro-problem-invalid-param-tag-cannot-load-command-parameter-robot_description/
 
-ackermann_vehicle
+ackermann_vehicle (updated with ROS Noetic)
 =================
 
 ROS packages for simulating a vehicle with Ackermann steering
