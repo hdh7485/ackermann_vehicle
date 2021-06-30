@@ -10,11 +10,23 @@ ackermann_vehicle (updated with ROS Noetic)
 
 ROS packages for simulating a vehicle with Ackermann steering
 
-## Installation
+# This package is for developers only. 
+
+## Installation (Noetic)
 ```
 cd ~/catkin_ws/src
 git clone https://github.com/aizzat/ackermann_vehicle/
 sudo apt install ros-noetic-ackermann-msgs
+cd ~/catkin_ws
+rosdep install --from-paths src --ignore-src -r -y
+catkin_make
+```
+
+## Installation (Melodic)
+```
+cd ~/catkin_ws/src
+git clone https://github.com/aizzat/ackermann_vehicle/
+sudo apt install ros-melodic-ackermann-msgs
 cd ~/catkin_ws
 rosdep install --from-paths src --ignore-src -r -y
 catkin_make
