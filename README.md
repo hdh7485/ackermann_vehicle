@@ -1,10 +1,10 @@
 # About this package
 
-Since in Robotic Operating System (ROS) and robot simulator Gazebo, there is no official package to simulate the Ackerman motion. The open-source code in Github is outdated due to the old version from many sources (it was last updated a few years back). It gave the compilation errors due to the non-compatibility of versions.
+In Robotic Operating System (ROS) and robot simulator Gazebo, there is no official package to simulate the Ackerman motion. The existing open-source github was build over many sources and it is outdated. Furthermore, the package could not be run in the latest version of ROS. It gave the compilation errors due to the non-compatibility of versions.
 
-We manage to update our Github repo with the latest version that works with the current version of ROS based on the previous research works. Melodic and Noetic were tested.
+We manage to update our Github repo with the latest version that works with the current version of ROS based on the previous research works. Melodic and Noetic were tested by our team. 
 
-The repaired version was uploaded to our Github. You can download it and improvise it if you want. Please provide a pull request just in case you have an improved version of the code.
+The repaired version was uploaded to our Github. You can download it and improvise it if you want. Please provide a pull request just in case you have an improved version of the code. 
 
 # This package is updated from original source to simulate the motion of the Ackerman drive in Gazebo
 
