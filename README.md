@@ -54,5 +54,5 @@ rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{linear:  {x: 0.1, y: 0.0, z: 
 ![Test run steering terminal](images/testrunackermann.jpg)
 
 # Video - Please click on the image
-![Video Running](https://youtu.be/nZZEMrxxz2o)
+[![Watch the video](https://img.youtube.com/vi/nZZEMrxxz2o/maxresdefault.jpg)](https://youtu.be/nZZEMrxxz2o)
 
