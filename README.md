@@ -13,6 +13,24 @@ Some of the launch file issues due to the newer ROS version affected the launch 
 
 https://answers.ros.org/question/122021/xacro-problem-invalid-param-tag-cannot-load-command-parameter-robot_description/
 
+# Tested version: 
+
+1. ROS Noetic running Ubuntu 20.04
+2. ROS Melodic running Ubuntu 18.04
+
+If you face running error in Python (for ROS Melodic) you can try to change the heading of the Python to Python3 in Python files. 
+
+Change from this: 
+```
+#!/usr/bin/env python
+```
+
+To this: 
+```
+#!/usr/bin/env python3
+```
+
+
 
 
 ackermann_vehicle (updated with ROS Noetic)
