@@ -1,6 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-# Author: christoph.roesmann@tu-dortmund.de
+# Original Author: christoph.roesmann@tu-dortmund.de
+# aizzat : Update python3 path
+# if it does not work - please change to '#!/usr/bin/env python' in path on the header
+# This is to fix some compatibility issues with ROS on Melodic
 
 import rospy, math
 from geometry_msgs.msg import Twist
