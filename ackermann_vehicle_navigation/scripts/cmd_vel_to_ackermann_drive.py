@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 # Original Author: christoph.roesmann@tu-dortmund.de
-# aizzat : Update python3 path
-# if it does not work - please change to '#!/usr/bin/env python' in path on the header
-# This is to fix some compatibility issues with ROS on Melodic
+# This maintained branch targets Python 3 with ROS Noetic. ROS Melodic is
+# retained as a legacy, unverified configuration; see the repository README.
 
-import rospy, math
+import math
+
+import rospy
 from geometry_msgs.msg import Twist
 from ackermann_msgs.msg import AckermannDriveStamped
 from ackermann_msgs.msg import AckermannDrive
@@ -65,10 +66,9 @@ if __name__ == '__main__':
     else:
       pub = rospy.Publisher(ackermann_cmd_topic, AckermannDriveStamped, queue_size=1)
     
-    rospy.loginfo("Node 'cmd_vel_to_ackermann_drive' started.\nListening to %s, publishing to %s. Frame id: %s, wheelbase: %f", "/cmd_vel", ackermann_cmd_topic, frame_id, wheelbase)
+    rospy.loginfo("Node 'cmd_vel_to_ackermann_drive' started.\nListening to %s, publishing to %s. Frame id: %s, wheelbase: %f", twist_cmd_topic, ackermann_cmd_topic, frame_id, wheelbase)
     
     rospy.spin()
     
   except rospy.ROSInterruptException:
     pass
-

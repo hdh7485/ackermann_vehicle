@@ -2,6 +2,12 @@
 Changelog for package ackermann_vehicle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.5 (2026-08-03)
+------------------
+* Published a ROS Noetic maintenance release with corrected repository
+  metadata and reproducible build/run documentation.
+* Hardened the isolated smoke test and package-level launch dependencies.
+
 0.1.3 (2015-09-18)
 ------------------
 * Changed the version to 0.1.3.

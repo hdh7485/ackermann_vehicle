@@ -1,0 +1,55 @@
+name: ROS Noetic
+
+on:
+  push:
+    branches: [noetic]
+  pull_request:
+    branches: [noetic]
+
+jobs:
+  noetic:
+    runs-on: ubuntu-22.04
+    container: ros:noetic-ros-base
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ROS and Python dependencies
+        shell: bash
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            python3-numpy python3-rospkg \
+            ros-noetic-ackermann-msgs ros-noetic-gazebo-plugins \
+            ros-noetic-gazebo-ros ros-noetic-gazebo-ros-control \
+            ros-noetic-hector-models ros-noetic-joint-state-publisher \
+            ros-noetic-robot-state-publisher ros-noetic-ros-controllers \
+            ros-noetic-rviz ros-noetic-teleop-twist-joy \
+            ros-noetic-tf ros-noetic-tf2-ros ros-noetic-tf-conversions \
+            ros-noetic-xacro
+      - name: Build catkin workspace
+        shell: bash
+        run: |
+          mkdir -p /root/catkin_ws/src
+          cp -a . /root/catkin_ws/src/ackermann_vehicle
+          source /opt/ros/noetic/setup.bash
+          rosdep update
+          cd /root/catkin_ws
+          rosdep install --from-paths src --ignore-src -r -y
+          catkin_make
+      - name: Verify install targets
+        shell: bash
+        run: |
+          source /opt/ros/noetic/setup.bash
+          cd /root/catkin_ws
+          catkin_make install
+          test -x install/lib/ackermann_vehicle_navigation/cmd_vel_to_ackermann_drive.py
+          test -f install/share/ackermann_vehicle_navigation/launch/path_follower.launch
+      - name: Run repository tests
+        shell: bash
+        run: python3 -m unittest discover -s /root/catkin_ws/src/ackermann_vehicle/tests
+      - name: Run headless Gazebo smoke test
+        shell: bash
+        run: |
+          source /opt/ros/noetic/setup.bash
+          source /root/catkin_ws/devel/setup.bash
+          cd /root/catkin_ws
+          CATKIN_WS=/root/catkin_ws bash src/ackermann_vehicle/scripts/noetic_smoke_test.sh

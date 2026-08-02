@@ -9,9 +9,13 @@ project(ackermann_vehicle_navigation)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   ackermann_msgs
-  roscpp
+  gazebo_msgs
+  geometry_msgs
+  nav_msgs
   rospy
   std_msgs
+  tf
+  tf2_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -104,10 +108,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES ackermann_vehicle_navigation
-#  CATKIN_DEPENDS ackermann_msgs roscpp rospy std_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS ackermann_msgs gazebo_msgs geometry_msgs nav_msgs rospy std_msgs tf tf2_ros
 )
 
 ###########
@@ -160,10 +161,19 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+catkin_install_python(PROGRAMS
+  scripts/cmd_vel_to_ackermann_drive.py
+  scripts/path_follower.py
+  scripts/path_follower_tester.py
+  scripts/path_publisher.py
+  scripts/path_publisher_npz.py
+  scripts/tf_odom_publisher.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY launch log path
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
@@ -197,11 +207,4 @@ include_directories(
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_ackermann_vehicle_navigation.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
+## Repository-level tests run without a ROS master from .github/workflows.

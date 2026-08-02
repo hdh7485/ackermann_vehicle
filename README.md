@@ -1,86 +1,85 @@
-# About this package
+# ackermann_vehicle
 
-In Robotic Operating System (ROS) and robot simulator Gazebo, there is no official package to simulate the Ackerman motion. The existing open-source github was build over many sources and it is outdated. Furthermore, the package could not be run in the latest version of ROS. It gave the compilation errors due to the non-compatibility of versions.
+ROS packages for simulating a vehicle with Ackermann steering in Gazebo
+Classic. The repository is maintained at
+<https://github.com/hdh7485/ackermann_vehicle> and keeps the original
+Wunderkammer Laboratory attribution in the package metadata and source files.
 
-We manage to update our Github repo with the latest version that works with the current version of ROS based on the previous research works. Melodic and Noetic were tested by our team. 
+## Support policy
 
-The repaired version was uploaded to our Github. You can download it and improvise it if you want. Please provide a pull request just in case you have an improved version of the code. 
+| Platform | Status | Verification |
+| --- | --- | --- |
+| ROS Noetic / Ubuntu 20.04 / Gazebo Classic 11 | Supported | Build and headless launch smoke test in CI and `scripts/noetic_smoke_test.sh` |
+| ROS Melodic / Ubuntu 18.04 / Gazebo Classic 9 | Legacy | Configuration is retained, but this release does not run a Melodic CI job |
+| ROS 2 / modern Gazebo | Roadmap | See [`docs/ROS2_GAZEBO_PLAN.md`](docs/ROS2_GAZEBO_PLAN.md); not supported by this ROS 1 release |
 
-# This package is updated from original source to simulate the motion of the Ackerman drive in Gazebo
+The supported release is ROS Noetic. The sensor variants require the matching
+Gazebo sensor plugins; the default headless smoke test intentionally exercises
+the base vehicle and controller path. The validated controller path uses the
+root namespace (`namespace:=/`); custom namespaces are not covered by this
+release's smoke test.
 
-Since most of the previous repo used previous version of ROS, I faced compilation error in ROS Noetic version running Ubuntu 20.04. 
-Some of the launch file issues due to the newer ROS version affected the launch file. The issue can be seen here:
+## Installation (ROS Noetic)
 
-https://answers.ros.org/question/122021/xacro-problem-invalid-param-tag-cannot-load-command-parameter-robot_description/
-
-# Tested version: 
-
-1. ROS Noetic running Ubuntu 20.04
-2. ROS Melodic running Ubuntu 18.04
-
-If you face running error in Python (for ROS Melodic) you can try to change the heading of the Python to Python3 in Python files. 
-
-Change from this: 
-```
-#!/usr/bin/env python
-```
-
-To this: 
-```
-#!/usr/bin/env python3
-```
-
-
-
-
-ackermann_vehicle (updated with ROS Noetic)
-=================
-
-ROS packages for simulating a vehicle with Ackermann steering
-
-# This package is for developers only. 
-
-## Installation (Noetic)
-```
+```bash
+mkdir -p ~/catkin_ws/src
 cd ~/catkin_ws/src
-git clone https://github.com/aizzat/ackermann_vehicle/
-sudo apt install ros-noetic-ackermann-msgs
+git clone --branch noetic https://github.com/hdh7485/ackermann_vehicle.git
 cd ~/catkin_ws
+rosdep update
 rosdep install --from-paths src --ignore-src -r -y
 catkin_make
+source devel/setup.bash
 ```
 
-## Installation (Melodic)
-```
-cd ~/catkin_ws/src
-git clone https://github.com/aizzat/ackermann_vehicle/
-sudo apt install ros-melodic-ackermann-msgs
-cd ~/catkin_ws
-rosdep install --from-paths src --ignore-src -r -y
-catkin_make
+For a repeatable, display-free check from the workspace, run:
+
+```bash
+bash src/ackermann_vehicle/scripts/noetic_smoke_test.sh
 ```
 
-## Running
-`roslaunch ackermann_vehicle_gazebo ackermann_vehicle_noetic.launch`
+The script starts a temporary ROS master, launches
+`ackermann_vehicle_gazebo/launch/ackermann_vehicle_noetic.launch` with Gazebo
+GUI disabled, and verifies that the Ackermann node and controller-manager
+services are available. To run it manually with a visible simulator:
 
-## To test the steering command: 
-
-```
-#go to terminal to this python directory:
-#/ackermann_vehicle/ackermann_vehicle_navigation/scripts/
-# /ackermann_vehicle/ackermann_vehicle_navigation/scripts$
-# Run the following commands:
-./cmd_vel_to_ackermann_drive.py
+```bash
+roslaunch ackermann_vehicle_gazebo ackermann_vehicle_noetic.launch
 ```
 
-This python file will wait for /cmd_vel inputs. You can test it with another terminal. For example:
+## Driving the simulated vehicle
 
+The controller consumes `ackermann_msgs/AckermannDrive` on `/ackermann_cmd`.
+The navigation package also provides a `cmd_vel` converter:
+
+```bash
+rosrun ackermann_vehicle_navigation cmd_vel_to_ackermann_drive.py
+rostopic pub -r 10 /cmd_vel geometry_msgs/Twist \
+  '{linear: {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.2}}'
 ```
-rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.2}}'
-```
+
+## Known Gazebo/controller issue coverage
+
+The Noetic launch files now load the controller YAML before invoking the
+Noetic `controller_manager/spawner`, pass an explicit service timeout, and
+expose `gui`, `paused`, and `use_sim_time` arguments. This addresses the
+controller-spawner race/failure mode reported in issue #3 and makes the
+headless path used by issue #4 reproducible. The `joy` launch file now points
+to the converter in `ackermann_vehicle_navigation`, where catkin installs it.
+
+If a local Gazebo installation still fails to load the model, capture the
+smoke-test log from `/tmp/ackermann_vehicle_ros_smoke` and include the ROS,
+Gazebo, and controller versions in the issue report. Hardware-specific Hokuyo
+topics are outside the base controller smoke test.
+
+## Original research and attribution
+
+This package was updated from earlier open-source Ackermann vehicle work. See
+the Apache-2.0 license and the per-package changelogs for attribution and
+maintenance history.
 
 ![Test run steering terminal](images/testrunackermann.jpg)
 
-# Video - Please click on the image
-[![Watch the video](https://img.youtube.com/vi/nZZEMrxxz2o/maxresdefault.jpg)](https://youtu.be/nZZEMrxxz2o)
+## Video
 
+[![Watch the video](https://img.youtube.com/vi/nZZEMrxxz2o/maxresdefault.jpg)](https://youtu.be/nZZEMrxxz2o)
