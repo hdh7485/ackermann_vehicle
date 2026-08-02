@@ -11,13 +11,50 @@ Wunderkammer Laboratory attribution in the package metadata and source files.
 | --- | --- | --- |
 | ROS Noetic / Ubuntu 20.04 / Gazebo Classic 11 | Supported | Build and headless launch smoke test in CI and `scripts/noetic_smoke_test.sh` |
 | ROS Melodic / Ubuntu 18.04 / Gazebo Classic 9 | Legacy | Configuration is retained, but this release does not run a Melodic CI job |
-| ROS 2 / modern Gazebo | Roadmap | See [`docs/ROS2_GAZEBO_PLAN.md`](docs/ROS2_GAZEBO_PLAN.md); not supported by this ROS 1 release |
+| ROS 2 Foxy / Ubuntu 20.04 | Legacy core support | `ackermann_vehicle_ros2` builds and passes a headless command/description smoke test; Foxy is EOL and receives compatibility-only maintenance |
+| ROS 2 Humble / Ubuntu 22.04 | Core support | `ackermann_vehicle_ros2` builds and passes a headless command/description smoke test |
+| ROS 2 Jazzy / Ubuntu 24.04 | Core support | `ackermann_vehicle_ros2` builds and passes a headless command/description smoke test |
 
-The supported release is ROS Noetic. The sensor variants require the matching
-Gazebo sensor plugins; the default headless smoke test intentionally exercises
-the base vehicle and controller path. The validated controller path uses the
-root namespace (`namespace:=/`); custom namespaces are not covered by this
-release's smoke test.
+The original full-simulation release is ROS Noetic. The sensor variants require
+the matching Gazebo sensor plugins; the default headless smoke test
+intentionally exercises the base vehicle and controller path. The validated
+controller path uses the root namespace (`namespace:=/`); custom namespaces are
+not covered by that release's smoke test.
+
+## ROS 2 core support
+
+The ROS 2 package, `ackermann_vehicle_ros2`, provides a maintained
+`geometry_msgs/Twist` to `ackermann_msgs/AckermannDriveStamped` bridge and an
+installed E-Maxx xacro for `robot_state_publisher`. It is built and smoke-tested
+in Foxy, Humble, and Jazzy containers. Build the package from a fresh ROS 2
+workspace for the distribution you use:
+
+```bash
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+git clone --branch "$ROS_DISTRO" https://github.com/hdh7485/ackermann_vehicle.git
+cd ~/ros2_ws
+source /opt/ros/$ROS_DISTRO/setup.bash
+colcon build --packages-select ackermann_vehicle_ros2
+source install/setup.bash
+```
+
+Run the bridge or the reproducible headless check:
+
+```bash
+ros2 launch ackermann_vehicle_ros2 cmd_vel_to_ackermann_drive.launch.py
+ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \
+  '{linear: {x: 2.0}, angular: {z: 1.0}}'
+
+ROS2_WS=$PWD bash src/ackermann_vehicle/scripts/ros2_smoke_test.sh
+```
+
+The smoke script defaults to ROS domain 203 so it does not attach to an
+interactive graph; set `ACKERMANN_ROS_DOMAIN_ID` to override it. ROS 2 Gazebo
+world, sensor, and `ros2_control` controller adapters are not yet shipped:
+Foxy/Humble need a Gazebo Classic adapter, while Jazzy needs a modern Gazebo
+(`ros_gz`/Harmonic) adapter. See [`docs/ROS2_GAZEBO_PLAN.md`](docs/ROS2_GAZEBO_PLAN.md)
+for those explicitly separate migration milestones.
 
 ## Installation (ROS Noetic)
 

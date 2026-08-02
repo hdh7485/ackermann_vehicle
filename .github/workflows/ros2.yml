@@ -1,0 +1,51 @@
+name: ROS 2
+
+on:
+  push:
+    branches: [foxy, humble, jazzy]
+  pull_request:
+    branches: [foxy, humble, jazzy]
+
+jobs:
+  ros2:
+    name: ${{ matrix.distro }}
+    runs-on: ubuntu-24.04
+    container: ros:${{ matrix.distro }}-ros-base
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [foxy, humble, jazzy]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ROS dependencies
+        shell: bash
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            python3-pytest \
+            ros-${ROS_DISTRO}-ackermann-msgs \
+            ros-${ROS_DISTRO}-robot-state-publisher \
+            ros-${ROS_DISTRO}-xacro
+      - name: Build ROS 2 workspace
+        shell: bash
+        run: |
+          mkdir -p /root/ros2_ws/src
+          cp -a . /root/ros2_ws/src/ackermann_vehicle
+          source /opt/ros/${ROS_DISTRO}/setup.bash
+          cd /root/ros2_ws
+          colcon build --packages-select ackermann_vehicle_ros2
+      - name: Run repository and package tests
+        shell: bash
+        run: |
+          source /opt/ros/${ROS_DISTRO}/setup.bash
+          source /root/ros2_ws/install/setup.bash
+          cd /root/ros2_ws
+          python3 -m unittest discover -s src/ackermann_vehicle/tests
+          python3 -m pytest src/ackermann_vehicle/ackermann_vehicle_ros2/test
+      - name: Run headless ROS 2 smoke test
+        shell: bash
+        run: |
+          source /opt/ros/${ROS_DISTRO}/setup.bash
+          source /root/ros2_ws/install/setup.bash
+          cd /root/ros2_ws
+          ROS2_WS=/root/ros2_ws bash src/ackermann_vehicle/scripts/ros2_smoke_test.sh
