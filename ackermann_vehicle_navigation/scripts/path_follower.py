@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import rospy
 from nav_msgs.msg import Path
 from nav_msgs.msg import Odometry
@@ -71,7 +71,7 @@ def odom_callback(odom_msg):
         cte = position*np.linalg.norm(np.cross(bc, -ba))/np.linalg.norm(bc)
     
         current_time = rospy.Time.now()
-        if seq is 0:
+        if seq == 0:
             start_time = current_time
             pre_time = rospy.Time.now() - rospy.Duration(0.001)
 

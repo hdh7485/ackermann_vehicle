@@ -2,6 +2,12 @@
 Changelog for package ackermann_vehicle_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.5 (2026-08-03)
+------------------
+* Made controller loading deterministic on Noetic and added headless launch
+  arguments for reproducible Gazebo checks.
+* Corrected the joy launcher's command-converter package.
+
 0.1.3 (2015-09-18)
 ------------------
 * Added some run_depend elements, and deleted some others.

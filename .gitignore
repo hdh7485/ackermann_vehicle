@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Catkin build products
+build/
+devel/
+install/
+.catkin_tools/
