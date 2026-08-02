@@ -15,7 +15,9 @@ Wunderkammer Laboratory attribution in the package metadata and source files.
 
 The supported release is ROS Noetic. The sensor variants require the matching
 Gazebo sensor plugins; the default headless smoke test intentionally exercises
-the base vehicle and controller path.
+the base vehicle and controller path. The validated controller path uses the
+root namespace (`namespace:=/`); custom namespaces are not covered by this
+release's smoke test.
 
 ## Installation (ROS Noetic)
 

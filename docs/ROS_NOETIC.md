@@ -25,6 +25,7 @@ source /opt/ros/noetic/setup.bash
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y
 catkin_make
+catkin_make install
 source devel/setup.bash
 bash src/ackermann_vehicle/scripts/noetic_smoke_test.sh
 ```
@@ -40,6 +41,8 @@ controller-manager service, and expected controller topics.
 * The tested path uses Gazebo Classic and `gazebo_ros_control`.
 * The Hokuyo and Hokuyo-IMU launch files are supported as optional sensor
   variants, but sensor plugin availability is host-dependent.
+* The verified controller path uses the root namespace (`namespace:=/`).
+  Custom namespaces require a separate controller-manager integration check.
 * Melodic compatibility is retained as legacy configuration and is not covered
   by the Noetic CI job.
 * ROS 2 and modern Gazebo are not claimed as supported in version 0.1.5. The

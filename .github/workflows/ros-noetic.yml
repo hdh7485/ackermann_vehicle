@@ -35,6 +35,14 @@ jobs:
           cd /root/catkin_ws
           rosdep install --from-paths src --ignore-src -r -y
           catkin_make
+      - name: Verify install targets
+        shell: bash
+        run: |
+          source /opt/ros/noetic/setup.bash
+          cd /root/catkin_ws
+          catkin_make install
+          test -x install/lib/ackermann_vehicle_navigation/cmd_vel_to_ackermann_drive.py
+          test -f install/share/ackermann_vehicle_navigation/launch/path_follower.launch
       - name: Run repository tests
         shell: bash
         run: python3 -m unittest discover -s /root/catkin_ws/src/ackermann_vehicle/tests

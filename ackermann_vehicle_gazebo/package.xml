@@ -36,6 +36,7 @@
 
   <run_depend>ackermann_msgs</run_depend>
   <run_depend>ackermann_vehicle_description</run_depend>
+  <run_depend>ackermann_vehicle_navigation</run_depend>
   <run_depend>controller_manager</run_depend>
   <run_depend>controller_manager_msgs</run_depend>
   <run_depend>effort_controllers</run_depend>

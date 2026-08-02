@@ -44,6 +44,29 @@ class RepositoryContractTest(unittest.TestCase):
         joy_text = (REPO_ROOT / "ackermann_vehicle_gazebo/launch/ackermann_vehicle_joy.launch").read_text()
         self.assertIn('pkg="ackermann_vehicle_navigation"', joy_text)
 
+        gazebo_package = ET.parse(REPO_ROOT / "ackermann_vehicle_gazebo/package.xml").getroot()
+        run_dependencies = {dependency.text for dependency in gazebo_package.findall("run_depend")}
+        self.assertIn("ackermann_vehicle_navigation", run_dependencies)
+
+    def test_installable_navigation_launches_are_portable(self):
+        launch_dir = REPO_ROOT / "ackermann_vehicle_navigation/launch"
+        for launch_file in launch_dir.glob("*.launch"):
+            launch_text = launch_file.read_text()
+            self.assertNotIn("/home/", launch_text, launch_file)
+            self.assertNotIn("/Users/", launch_text, launch_file)
+
+        for launch_name in ("path_follower.launch", "path_follower_test.launch"):
+            launch_text = (launch_dir / launch_name).read_text()
+            self.assertIn('arg name="tracking_path_directory"', launch_text)
+            self.assertIn('value="$(arg tracking_path_directory)"', launch_text)
+
+    def test_smoke_test_owns_an_isolated_ros_master(self):
+        smoke_text = (REPO_ROOT / "scripts/noetic_smoke_test.sh").read_text()
+        self.assertIn("roscore -p", smoke_text)
+        self.assertIn('export ROS_MASTER_URI="http://127.0.0.1:${ROS_MASTER_PORT}"', smoke_text)
+        self.assertIn('rosnode kill "${node}"', smoke_text)
+        self.assertNotIn("for node in /gazebo", smoke_text)
+
     def test_noetic_xacro_commands_do_not_use_removed_xacro_py(self):
         for launch_file in (REPO_ROOT / "ackermann_vehicle_description/launch").glob("*.launch"):
             self.assertNotIn("xacro.py", launch_file.read_text(), launch_file)
