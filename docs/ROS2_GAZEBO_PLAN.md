@@ -22,6 +22,13 @@ repository. New ROS 2 core changes should target Jazzy and then be ported
 deliberately to the `foxy` and `humble` branches when their compatibility
 contracts allow it.
 
+## Branch maintenance
+
+Land shared ROS 2 changes on `jazzy`, then deliberately backport them to
+`humble` and `foxy` only after their branch-local CI passes. Keep Jazzy-only
+modern Gazebo or Ubuntu 24.04 changes on this branch; do not imply that they
+are portable to the older distributions.
+
 ## Deliberately separate simulator migration
 
 The original xacro still contains ROS 1 Gazebo Classic transmission and plugin
