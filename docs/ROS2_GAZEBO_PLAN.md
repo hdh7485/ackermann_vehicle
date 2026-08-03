@@ -17,9 +17,16 @@ verifies both the transformed command and robot-description process without a
 GUI. `.github/workflows/ros2.yml` repeats this validation only for Humble. The
 `foxy` and `jazzy` branches own their respective compatibility contracts.
 
-Humble is the maintained ROS 2 baseline in this repository. New ROS 2 core
-changes should target Humble and then be ported deliberately to the `foxy` and
-`jazzy` branches when their compatibility contracts allow it.
+Humble is a maintained compatibility branch in this repository. New shared ROS
+2 core changes land on the default `jazzy` branch, then are deliberately
+backported here when Humble's compatibility contract allows it.
+
+## Branch maintenance
+
+`jazzy` is the default branch and upstream integration target for shared ROS 2
+work. Do not merge unrelated Humble-specific changes into it; keep them on this
+branch. Backport shared Jazzy changes only after the Humble branch-local CI
+passes.
 
 ## Deliberately separate simulator migration
 
