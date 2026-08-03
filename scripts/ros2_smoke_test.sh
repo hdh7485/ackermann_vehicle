@@ -8,6 +8,16 @@ if [[ -z "${ROS_DISTRO:-}" ]]; then
   exit 1
 fi
 
+expected_distro="$(tr -d '[:space:]' < "$(dirname "${BASH_SOURCE[0]}")/../ackermann_vehicle_ros2/ROS_DISTRO")"
+if [[ -z "$expected_distro" ]]; then
+  echo "The branch ROS 2 distribution marker is empty." >&2
+  exit 1
+fi
+if [[ "$ROS_DISTRO" != "$expected_distro" ]]; then
+  echo "This branch supports ROS 2 ${expected_distro}, but ROS_DISTRO is ${ROS_DISTRO}." >&2
+  exit 1
+fi
+
 # Keep this smoke graph separate from an interactive ROS 2 graph and from
 # unrelated distributions running on the same host. Callers can override it.
 export ROS_DOMAIN_ID="${ACKERMANN_ROS_DOMAIN_ID:-203}"
