@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ackermann_vehicle_ros2</name>
+  <version>0.2.0</version>
+  <description>
+    ROS 2 command and robot-description support for ackermann_vehicle.
+  </description>
+
+  <maintainer email="hdh7485@kaist.ac.kr">Donghee Han</maintainer>
+  <license>Apache 2.0</license>
+  <url type="bugtracker">https://github.com/hdh7485/ackermann_vehicle/issues</url>
+  <url type="repository">https://github.com/hdh7485/ackermann_vehicle.git</url>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>ackermann_msgs</depend>
+  <depend>ament_index_python</depend>
+  <depend>geometry_msgs</depend>
+  <depend>launch</depend>
+  <depend>launch_ros</depend>
+  <depend>rclpy</depend>
+  <depend>robot_state_publisher</depend>
+  <exec_depend>xacro</exec_depend>
+
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

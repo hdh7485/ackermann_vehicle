@@ -1,8 +1,10 @@
 # ROS Noetic verification
 
-This release targets ROS Noetic on Ubuntu 20.04 with Gazebo Classic 11. The
-repository is a ROS 1 catkin workspace: clone it below `src/`, install the
-declared dependencies with `rosdep`, and build with `catkin_make`.
+This document applies to the `noetic` branch, which targets ROS Noetic on
+Ubuntu 20.04 with Gazebo Classic 11. It is a ROS 1 catkin workspace: clone it
+below `src/`, install the declared dependencies with `rosdep`, and build with
+`catkin_make`. The ROS 2 packages are maintained on the `foxy`, `humble`, and
+`jazzy` branches.
 
 ## Reproducible Docker check
 
@@ -45,5 +47,5 @@ controller-manager service, and expected controller topics.
   Custom namespaces require a separate controller-manager integration check.
 * Melodic compatibility is retained as legacy configuration and is not covered
   by the Noetic CI job.
-* ROS 2 and modern Gazebo are not claimed as supported in version 0.1.5. The
-  staged migration plan is documented separately.
+* ROS 2 support is maintained on the separate `foxy`, `humble`, and `jazzy`
+  branches. Gazebo/controller migration remains distribution-specific.

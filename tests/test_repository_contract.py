@@ -13,10 +13,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 class RepositoryContractTest(unittest.TestCase):
     def test_package_metadata_is_current(self):
         package_files = sorted(REPO_ROOT.glob("*/package.xml"))
-        self.assertEqual(len(package_files), 4)
+        self.assertEqual(len(package_files), 5)
         for package_file in package_files:
             root = ET.parse(package_file).getroot()
-            self.assertEqual(root.findtext("version"), "0.1.5", package_file)
+            expected_version = "0.2.0" if package_file.parent.name == "ackermann_vehicle_ros2" else "0.1.5"
+            self.assertEqual(root.findtext("version"), expected_version, package_file)
             self.assertEqual(root.findtext("license"), "Apache 2.0", package_file)
             urls = {url.attrib.get("type"): url.text for url in root.findall("url")}
             self.assertEqual(urls["repository"], "https://github.com/hdh7485/ackermann_vehicle.git")
