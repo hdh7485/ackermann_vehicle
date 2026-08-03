@@ -1,19 +1,19 @@
-name: ROS 2 Foxy
+name: ROS 2 Jazzy
 
 on:
   push:
-    branches: [foxy]
+    branches: [jazzy]
   pull_request:
-    branches: [foxy]
+    branches: [jazzy]
 
 env:
-  ROS_DISTRO: foxy
+  ROS_DISTRO: jazzy
 
 jobs:
   ros2:
-    name: Foxy
+    name: Jazzy
     runs-on: ubuntu-24.04
-    container: ros:foxy-ros-base
+    container: ros:jazzy-ros-base
     steps:
       - uses: actions/checkout@v4
       - name: Install ROS dependencies
