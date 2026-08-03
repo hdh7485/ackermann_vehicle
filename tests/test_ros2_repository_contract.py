@@ -62,7 +62,11 @@ class Ros2RepositoryContractTests(unittest.TestCase):
             REPOSITORY_ROOT / ".github" / "workflows" / "ros2.yml"
         ).read_text()
 
-        self.assertIn(f"branches: [{expected_distribution}]", workflow)
+        self.assertEqual(
+            workflow.count(f"branches: [{expected_distribution}]"), 2
+        )
+        for distribution in SUPPORTED_DISTRIBUTIONS - {expected_distribution}:
+            self.assertNotIn(f"branches: [{distribution}]", workflow)
         self.assertIn(f"ROS_DISTRO: {expected_distribution}", workflow)
         self.assertIn(f"ros:{expected_distribution}-ros-base", workflow)
         self.assertNotIn("matrix:", workflow)
