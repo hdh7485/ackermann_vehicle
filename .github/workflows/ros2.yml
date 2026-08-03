@@ -1,19 +1,19 @@
-name: ROS 2 Foxy
+name: ROS 2 Humble
 
 on:
   push:
-    branches: [foxy]
+    branches: [humble]
   pull_request:
-    branches: [foxy]
+    branches: [humble]
 
 env:
-  ROS_DISTRO: foxy
+  ROS_DISTRO: humble
 
 jobs:
   ros2:
-    name: Foxy
+    name: Humble
     runs-on: ubuntu-24.04
-    container: ros:foxy-ros-base
+    container: ros:humble-ros-base
     steps:
       - uses: actions/checkout@v4
       - name: Install ROS dependencies
