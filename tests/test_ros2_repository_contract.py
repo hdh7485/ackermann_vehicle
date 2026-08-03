@@ -5,9 +5,13 @@ import xml.etree.ElementTree as ElementTree
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 ROS2_PACKAGE = REPOSITORY_ROOT / "ackermann_vehicle_ros2"
+SUPPORTED_DISTRIBUTIONS = {"foxy", "humble", "jazzy"}
 
 
 class Ros2RepositoryContractTests(unittest.TestCase):
+    def expected_distribution(self):
+        return (ROS2_PACKAGE / "ROS_DISTRO").read_text().strip()
+
     def test_ros2_package_declares_ament_and_runtime_contract(self):
         package = ElementTree.parse(ROS2_PACKAGE / "package.xml").getroot()
         self.assertEqual(package.attrib["format"], "3")
@@ -40,18 +44,28 @@ class Ros2RepositoryContractTests(unittest.TestCase):
         self.assertIn("ros2_ackermann_probe.py", smoke_test)
         self.assertIn("robot_description.launch.py", smoke_test)
         self.assertIn("ROS_DISTRO", smoke_test)
+        self.assertIn("expected_distro", smoke_test)
+        self.assertIn("ROS_DISTRO is ${ROS_DISTRO}", smoke_test)
         self.assertIn("ROS_DOMAIN_ID", smoke_test)
         self.assertIn("for _ in $(seq 1 10)", smoke_test)
 
-    def test_ci_covers_each_supported_distribution(self):
+    def test_branch_declares_one_supported_distribution(self):
+        expected_distribution = self.expected_distribution()
+        self.assertIn(expected_distribution, SUPPORTED_DISTRIBUTIONS)
+
+        readme = (REPOSITORY_ROOT / "README.md").read_text()
+        self.assertIn(f"--branch {expected_distribution}", readme)
+
+    def test_ci_covers_the_branch_distribution(self):
+        expected_distribution = self.expected_distribution()
         workflow = (
             REPOSITORY_ROOT / ".github" / "workflows" / "ros2.yml"
         ).read_text()
 
-        for distribution in ("foxy", "humble", "jazzy"):
-            self.assertIn(distribution, workflow)
-
-        self.assertIn("ros:${{ matrix.distro }}-ros-base", workflow)
+        self.assertIn(f"branches: [{expected_distribution}]", workflow)
+        self.assertIn(f"ROS_DISTRO: {expected_distribution}", workflow)
+        self.assertIn(f"ros:{expected_distribution}-ros-base", workflow)
+        self.assertNotIn("matrix:", workflow)
 
     def test_ament_package_is_not_hidden_from_colcon(self):
         self.assertFalse((ROS2_PACKAGE / "CATKIN_IGNORE").exists())
