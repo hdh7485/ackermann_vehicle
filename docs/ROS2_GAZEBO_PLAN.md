@@ -21,6 +21,14 @@ Foxy is end-of-life, so its status is deliberately compatibility-only: CI
 signals when the common package regresses but does not promise new Foxy-only
 features.
 
+## Branch maintenance
+
+`jazzy` is the default branch and upstream integration target for shared ROS 2
+work. Land distribution-independent changes there first, then deliberately
+backport them to `humble` and `foxy` only after their branch-local CI passes.
+Keep Foxy-only dependency, compatibility, and documentation changes on this
+branch.
+
 ## Deliberately separate simulator migration
 
 The original xacro still contains ROS 1 Gazebo Classic transmission and plugin
