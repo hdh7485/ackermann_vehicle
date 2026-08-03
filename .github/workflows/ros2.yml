@@ -1,20 +1,19 @@
-name: ROS 2
+name: ROS 2 Humble
 
 on:
   push:
-    branches: [foxy, humble, jazzy]
+    branches: [humble]
   pull_request:
-    branches: [foxy, humble, jazzy]
+    branches: [humble]
+
+env:
+  ROS_DISTRO: humble
 
 jobs:
   ros2:
-    name: ${{ matrix.distro }}
+    name: Humble
     runs-on: ubuntu-24.04
-    container: ros:${{ matrix.distro }}-ros-base
-    strategy:
-      fail-fast: false
-      matrix:
-        distro: [foxy, humble, jazzy]
+    container: ros:humble-ros-base
     steps:
       - uses: actions/checkout@v4
       - name: Install ROS dependencies
