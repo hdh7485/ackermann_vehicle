@@ -1,4 +1,4 @@
-# ROS 2 and Gazebo plan
+# ROS 2 Jazzy and Gazebo plan
 
 ## Completed ROS 2 core milestone (0.2.0)
 
@@ -10,18 +10,24 @@ geometry, and the E-Maxx xacro is installed for ROS 2
 
 | Distribution | Base platform | Status | CI/runtime evidence |
 | --- | --- | --- | --- |
-| Foxy | Ubuntu 20.04 | Legacy core support | `colcon build`, kinematics tests, bridge publish/subscribe smoke, robot-description launch |
-| Humble | Ubuntu 22.04 | Core support | `colcon build`, kinematics tests, bridge publish/subscribe smoke, robot-description launch |
 | Jazzy | Ubuntu 24.04 | Core support | `colcon build`, kinematics tests, bridge publish/subscribe smoke, robot-description launch |
 
 `scripts/ros2_smoke_test.sh` owns a separate ROS 2 domain by default and
 verifies both the transformed command and robot-description process without a
-GUI. `.github/workflows/ros2.yml` repeats this validation for all three
-distributions.
+GUI. `.github/workflows/ros2.yml` repeats this validation only for Jazzy. The
+`foxy` and `humble` branches own their respective compatibility contracts.
 
-Foxy is end-of-life, so its status is deliberately compatibility-only: CI
-signals when the common package regresses but does not promise new Foxy-only
-features.
+Jazzy is the default branch and the current ROS 2 core target in this
+repository. New ROS 2 core changes should target Jazzy and then be ported
+deliberately to the `foxy` and `humble` branches when their compatibility
+contracts allow it.
+
+## Branch maintenance
+
+Land shared ROS 2 changes on `jazzy`, then deliberately backport them to
+`humble` and `foxy` only after their branch-local CI passes. Keep Jazzy-only
+modern Gazebo or Ubuntu 24.04 changes on this branch; do not imply that they
+are portable to the older distributions.
 
 ## Deliberately separate simulator migration
 
